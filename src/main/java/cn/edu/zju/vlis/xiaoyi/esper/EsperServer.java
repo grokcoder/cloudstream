@@ -1,6 +1,6 @@
 package cn.edu.zju.vlis.xiaoyi.esper;
 
-import cn.edu.zju.vlis.xiaoyi.esper.eventbean.StockTick;
+import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;
 import cn.edu.zju.vlis.xiaoyi.esper.monitor.StockTickerMonitor;
 import cn.edu.zju.vlis.xiaoyi.esper.monitor.StockTickerResultListener;
 import com.espertech.esper.client.Configuration;

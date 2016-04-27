@@ -8,8 +8,8 @@
  **************************************************************************************/
 package cn.edu.zju.vlis.xiaoyi.esper.monitor;
 
-import cn.edu.zju.vlis.xiaoyi.esper.eventbean.PriceLimit;
-import cn.edu.zju.vlis.xiaoyi.esper.eventbean.StockTick;
+import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.PriceLimit;
+import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;

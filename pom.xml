@@ -19,6 +19,7 @@
         <mongodb.version>3.2.2</mongodb.version>
         <bson.version>3.0.4</bson.version>
         <guava.version>19.0</guava.version>
+        <esper.version>5.4.0</esper.version>
     </properties>
 
     <dependencies>
@@ -39,6 +40,12 @@
             <groupId>com.espertech</groupId>
             <artifactId>esper</artifactId>
             <version>5.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
         </dependency>
 
     </dependencies>

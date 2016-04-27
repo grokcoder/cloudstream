@@ -9,7 +9,7 @@
 package cn.edu.zju.vlis.xiaoyi.esper.monitor;
 
 
-import cn.edu.zju.vlis.xiaoyi.esper.eventbean.LimitAlert;
+import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.LimitAlert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
