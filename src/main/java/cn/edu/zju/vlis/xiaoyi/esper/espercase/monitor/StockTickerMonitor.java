@@ -6,7 +6,7 @@
  * The software in this package is published under the terms of the GPL license       *
  * a copy of which has been included with this distribution in the license.txt file.  *
  **************************************************************************************/
-package cn.edu.zju.vlis.xiaoyi.esper.monitor;
+package cn.edu.zju.vlis.xiaoyi.esper.espercase.monitor;
 
 import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.PriceLimit;
 import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;

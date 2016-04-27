@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.xiaoyi.esper;
+package cn.edu.zju.vlis.xiaoyi.esper.espercase;
 
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.plugin.PluginLoader;

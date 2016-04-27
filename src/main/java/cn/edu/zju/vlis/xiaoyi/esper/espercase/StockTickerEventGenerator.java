@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.xiaoyi.esper;
+package cn.edu.zju.vlis.xiaoyi.esper.espercase;
 
 import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.PriceLimit;
 import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;
