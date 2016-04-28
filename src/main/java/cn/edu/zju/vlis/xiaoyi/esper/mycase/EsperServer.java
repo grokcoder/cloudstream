@@ -3,12 +3,11 @@ package cn.edu.zju.vlis.xiaoyi.esper.mycase;
 import cn.edu.zju.vlis.xiaoyi.util.generator.StockTickerGenerator;
 import cn.edu.zju.vlis.xiaoyi.util.generator.StreamEventGenerator;
 import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;
-import com.espertech.esper.client.Configuration;
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
+import com.espertech.esper.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,7 +17,7 @@ import java.util.concurrent.Executors;
 
 public class EsperServer {
 
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(EsperServer.class.getSimpleName());
 
     private final String engineURI;
     private Configuration configuration = new Configuration();
@@ -36,7 +35,20 @@ public class EsperServer {
         LOG.info("initializing EsperServer ... ");
         epService.initialize();
 
-        new StockMonitor(epService, new StockListener());
+       /* String expressionText = "every stock=StockTick()";
+        EPStatement factory = epService.getEPAdministrator().createPattern(expressionText);
+        factory.addListener(new StockListener());
+*/
+        EPStatement filterESP = epService.getEPAdministrator().createEPL("select stockSymbol, avg(price) as avg from StockTick(stockSymbol = 'S1')");
+
+       // select * from StockTick(stockSymbol = 'S3')
+
+        filterESP.addListener(new UpdateListener() {
+            @Override
+            public void update(EventBean[] newEvents, EventBean[] oldEvents) {
+                LOG.info(newEvents[0].getUnderlying() + "");
+            }
+        });
 
     }
 
@@ -45,8 +57,20 @@ public class EsperServer {
         server.init();
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(new StockProducer());
-    }
 
+        Scanner in = new Scanner(System.in);
+        while (in.hasNext()){
+            String sql = in.nextLine();
+            EPStatement filterESP = epService.getEPAdministrator().createEPL(sql);
+
+            filterESP.addListener(new UpdateListener() {
+                @Override
+                public void update(EventBean[] newEvents, EventBean[] oldEvents) {
+                    LOG.info(newEvents[0].getUnderlying() + "");
+                }
+            });
+        }
+    }
 
 
     static class StockProducer implements Runnable{
@@ -56,17 +80,7 @@ public class EsperServer {
         public StockProducer(){
             generator = new StockTickerGenerator();
         }
-        /**
-         * When an object implementing interface <code>Runnable</code> is used
-         * to create a thread, starting the thread causes the object's
-         * <code>run</code> method to be called in that separately executing
-         * thread.
-         * <p>
-         * The general contract of the method <code>run</code> is that it may
-         * take any action whatsoever.
-         *
-         * @see Thread#run()
-         */
+
         @Override
         public void run() {
             while (true){
