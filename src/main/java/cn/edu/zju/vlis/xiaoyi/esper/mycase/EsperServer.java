@@ -1,15 +1,18 @@
 package cn.edu.zju.vlis.xiaoyi.esper.mycase;
 
+import cn.edu.zju.vlis.xiaoyi.util.RandomHelper;
 import cn.edu.zju.vlis.xiaoyi.util.generator.StockTickerGenerator;
 import cn.edu.zju.vlis.xiaoyi.util.generator.StreamEventGenerator;
+import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockInfo;
 import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;
 import com.espertech.esper.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by wangxiaoyi on 16/4/27.
@@ -23,12 +26,16 @@ public class EsperServer {
     private Configuration configuration = new Configuration();
     private static EPServiceProvider epService;
 
+    private static final BlockingQueue<Object> eventQueue = new LinkedBlockingQueue<>();
+
 
     public EsperServer(String uri){
         engineURI = uri;
         LOG.info("Setting up EPL");
         configuration.addEventType("StockTick", StockTick.class.getName());
+        configuration.addEventType("StockInfo", StockInfo.class.getName());
         epService = EPServiceProviderManager.getProvider(engineURI, configuration);
+
     }
 
     public void init(){
@@ -39,17 +46,28 @@ public class EsperServer {
         EPStatement factory = epService.getEPAdministrator().createPattern(expressionText);
         factory.addListener(new StockListener());
 */
-        EPStatement filterESP = epService.getEPAdministrator().createEPL("select stockSymbol, avg(price) as avg from StockTick(stockSymbol = 'S1')");
+
+
+        String epl = "select si.industry, st.stockSymbol, st.price from StockInfo.win:length(10) as si inner join StockTick.win:length(10) as st on si.symbol = st.stockSymbol";
+        //"select * from StockTick(price > 10)"
+        EPStatement filterESP = epService.getEPAdministrator().createEPL(epl);
 
        // select * from StockTick(stockSymbol = 'S3')
 
         filterESP.addListener(new UpdateListener() {
             @Override
             public void update(EventBean[] newEvents, EventBean[] oldEvents) {
+
+                //eventQueue.add(newEvents[0].getUnderlying());
                 LOG.info(newEvents[0].getUnderlying() + "");
             }
         });
 
+    }
+
+
+    public static synchronized void sendEvent(Object event){
+        epService.getEPRuntime().sendEvent(event);
     }
 
     public static void main(String []args){
@@ -58,7 +76,35 @@ public class EsperServer {
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(new StockProducer());
 
-        Scanner in = new Scanner(System.in);
+        /*executor.submit(() -> {
+            while (true) {
+                Object event = null;
+                try {
+                    event = eventQueue.take();
+                    System.err.print(event.getClass());
+                } catch (InterruptedException e) {
+                   // e.printStackTrace();
+                }
+                sendEvent(event);
+            }
+        });*/
+        String [] names = {"S1", "S2", "S3","S4","S5"};
+        String [] industries = {"IN1", "IN2","IN3","IN4"};
+        executor.submit(() -> {
+           while (true){
+
+               StockInfo info = new StockInfo(names[RandomHelper.getIntFromRange(0, 4)],
+                       industries[RandomHelper.getIntFromRange(0, 4)]);
+               sendEvent(info);
+               Thread.sleep(10);
+           }
+
+        });
+
+
+
+
+     /*   Scanner in = new Scanner(System.in);
         while (in.hasNext()){
             String sql = in.nextLine();
             EPStatement filterESP = epService.getEPAdministrator().createEPL(sql);
@@ -69,7 +115,8 @@ public class EsperServer {
                     LOG.info(newEvents[0].getUnderlying() + "");
                 }
             });
-        }
+
+        }*/
     }
 
 
@@ -83,14 +130,32 @@ public class EsperServer {
 
         @Override
         public void run() {
-            while (true){
+            //while (true){
+               //simulateByRandom();
+               // simulate();
+            //}
+            simulateByRandom();
+        }
+
+
+        public void simulateByRandom(){
+            while (true) {
                 StockTick st = (StockTick) generator.next();
-                epService.getEPRuntime().sendEvent(st);
+
+                sendEvent(st);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+
+
+        public void simulate(){
+            for (int i = 0; i < 10; i ++){
+                StockTick stockTick = new StockTick("C1", 5 + i, System.currentTimeMillis());
+                epService.getEPRuntime().sendEvent(stockTick);
             }
         }
     }
