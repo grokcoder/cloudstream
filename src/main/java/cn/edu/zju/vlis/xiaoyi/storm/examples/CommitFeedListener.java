@@ -10,6 +10,7 @@ import org.apache.storm.tuple.Values;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,10 +47,20 @@ public class CommitFeedListener extends BaseRichSpout{
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
         this.outputCollector = collector;
         try {
-            commits = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("changelog.txt"),
-                    Charset.defaultCharset().name());
+            //commits = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("changelog.txt"),
+              //      Charset.defaultCharset().name());
+            commits = new LinkedList<>();
+            commits.add("b20ea50 nathan@example.com");
+            commits.add("064874b andy@example.com");
+            commits.add("28e4f8e andy@example.com");
+            commits.add("9a3e07f andy@example.com");
+            commits.add("cbb9cd1 nathan@example.com");
+            commits.add("0f663d2 jackson@example.com");
+            commits.add("0a4b984 nathan@example.com");
+            commits.add("1915ca4 derek@example.com");
 
-        }catch (IOException ioe){
+
+        }catch (Exception ioe){
             throw new RuntimeException(ioe);
         }
     }

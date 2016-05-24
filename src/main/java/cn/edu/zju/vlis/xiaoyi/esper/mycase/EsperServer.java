@@ -90,7 +90,7 @@ public class EsperServer {
         });*/
         String [] names = {"S1", "S2", "S3","S4","S5"};
         String [] industries = {"IN1", "IN2","IN3","IN4"};
-        executor.submit(() -> {
+      /*  executor.submit(() -> {
            while (true){
 
                StockInfo info = new StockInfo(names[RandomHelper.getIntFromRange(0, 4)],
@@ -99,7 +99,7 @@ public class EsperServer {
                Thread.sleep(10);
            }
 
-        });
+        });*/
 
 
 

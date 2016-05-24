@@ -27,7 +27,7 @@ public class EmailCounter extends BaseBasicBolt{
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
         String email = input.getStringByField("email");
-        int count = counts.getOrDefault(email, 0);
+        int count = counts.get(email) == null ? 0 : counts.get(email);
         counts.put(email, count + 1);
         printCounts();
     }

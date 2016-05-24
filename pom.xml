@@ -56,15 +56,28 @@
         </dependency>
 
 
-
-
     </dependencies>
-
 
 
     <!--build plugins management-->
     <build>
         <plugins>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>cn.edu.zju.vlis.xiaoyi.storm.examples.Start</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -78,56 +91,59 @@
 
 
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>./</classpathPrefix>
-                            <mainClass>cn.britsoft.crawler.CBPCrawler</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Class-Path>../conf/</Class-Path>
-                        </manifestEntries>
-                    </archive>
-                    <includes>
-                        <include>**/*.class</include>
-                    </includes>
-                    <outputDirectory>lib/</outputDirectory>
-                </configuration>
 
-            </plugin>
+            <!--  <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-jar-plugin</artifactId>
+                  <configuration>
+                      <archive>
+                          <manifest>
+                              <addClasspath>true</addClasspath>
+                              <classpathPrefix>./</classpathPrefix>
+                              <mainClass>cn.britsoft.crawler.CBPCrawler</mainClass>
+                          </manifest>
+                          <manifestEntries>
+                              <Class-Path>../conf/</Class-Path>
+                          </manifestEntries>
+                      </archive>
+                      <includes>
+                          <include>**/*.class</include>
+                      </includes>
+                      <outputDirectory>lib/</outputDirectory>
+                  </configuration>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <outputDirectory>lib</outputDirectory>
-                    <excludeTransitive>false</excludeTransitive>
-                    <stripVersion>false</stripVersion>
-                </configuration>
+              </plugin>-->
+            <!--
 
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <!--copy the dependency for this project-->
-                        <configuration>
-                            <outputDirectory>lib</outputDirectory>
-                            <excludeTransitive>false</excludeTransitive>
-                            <stripVersion>false</stripVersion>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-dependency-plugin</artifactId>
+                            <configuration>
+                                <outputDirectory>lib</outputDirectory>
+                                <excludeTransitive>false</excludeTransitive>
+                                <stripVersion>false</stripVersion>
+                            </configuration>
+
+                            <executions>
+                                <execution>
+                                    <id>copy-dependencies</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>copy-dependencies</goal>
+                                    </goals>
+                                    &lt;!&ndash;copy the dependency for this project&ndash;&gt;
+                                    <configuration>
+                                        <outputDirectory>lib</outputDirectory>
+                                        <excludeTransitive>false</excludeTransitive>
+                                        <stripVersion>false</stripVersion>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+            -->
 
 
-            <plugin>
+          <!--  <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
@@ -149,7 +165,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
 
         </plugins>
