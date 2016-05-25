@@ -35,6 +35,7 @@ public class EsperServer {
         configuration.addEventType("StockInfo", StockInfo.class.getName());
         epService = EPServiceProviderManager.getProvider(engineURI, configuration);
 
+
     }
 
     public void init(){
@@ -99,8 +100,6 @@ public class EsperServer {
            }
 
         });*/
-
-
 
 
      /*   Scanner in = new Scanner(System.in);
