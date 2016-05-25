@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.util.generator.eventbean;
+package cn.edu.zju.vlis.example.generator.eventbean;
 
 /**
  * Created by wangxiaoyi on 16/5/9.

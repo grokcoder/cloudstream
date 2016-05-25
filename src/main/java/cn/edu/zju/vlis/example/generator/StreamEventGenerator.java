@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.util.generator;
+package cn.edu.zju.vlis.example.generator;
 
 /**
  * Created by wangxiaoyi on 16/4/27.

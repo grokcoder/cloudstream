@@ -1,7 +1,7 @@
-package cn.edu.zju.vlis.util.generator;
+package cn.edu.zju.vlis.example.generator;
 
 import cn.edu.zju.vlis.util.MathHelper;
-import cn.edu.zju.vlis.util.generator.eventbean.StockTick;
+import cn.edu.zju.vlis.example.generator.eventbean.StockTick;
 import cn.edu.zju.vlis.util.RandomHelper;
 
 /**

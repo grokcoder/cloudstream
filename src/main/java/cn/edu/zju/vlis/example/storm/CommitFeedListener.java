@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.storm.examples;
+package cn.edu.zju.vlis.example.storm;
 
 import org.apache.storm.shade.org.apache.commons.io.IOUtils;
 import org.apache.storm.spout.SpoutOutputCollector;

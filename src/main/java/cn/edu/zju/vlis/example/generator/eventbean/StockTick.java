@@ -1,5 +1,5 @@
 
-package cn.edu.zju.vlis.util.generator.eventbean;
+package cn.edu.zju.vlis.example.generator.eventbean;
 
 import cn.edu.zju.vlis.util.DateHelper;
 

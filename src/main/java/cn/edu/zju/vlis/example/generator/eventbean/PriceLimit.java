@@ -6,35 +6,34 @@
  * The software in this package is published under the terms of the GPL license       *
  * a copy of which has been included with this distribution in the license.txt file.  *
  **************************************************************************************/
-package cn.edu.zju.vlis.util.generator.eventbean;
+package cn.edu.zju.vlis.example.generator.eventbean;
 
-public class LimitAlert {
-    private StockTick tick;
-    private PriceLimit limit;
-    double initialPrice;
+public class PriceLimit {
+    String userId;
+    String stockSymbol;
+    double limitPct;
 
-    public LimitAlert(StockTick tick, PriceLimit limit, double initialPrice) {
-        this.tick = tick;
-        this.limit = limit;
-        this.initialPrice = initialPrice;
+    public PriceLimit(String userId, String stockSymbol, double limitPct) {
+        this.userId = userId;
+        this.stockSymbol = stockSymbol;
+        this.limitPct = limitPct;
     }
 
-    public StockTick getTick() {
-        return tick;
+    public String getUserId() {
+        return userId;
     }
 
-    public PriceLimit getPriceLimit() {
-        return limit;
+    public String getStockSymbol() {
+        return stockSymbol;
     }
 
-    public double getInitialPrice() {
-        return initialPrice;
+    public double getLimitPct() {
+        return limitPct;
     }
 
     public String toString() {
-        return tick.toString() +
-                "  " + limit.toString() +
-                "  initialPrice=" + initialPrice;
+        return "userId=" + userId +
+                "  stockSymbol=" + stockSymbol +
+                "  limitPct=" + limitPct;
     }
-
 }
