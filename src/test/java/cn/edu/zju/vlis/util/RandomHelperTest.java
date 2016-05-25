@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.xiaoyi.util;
+package cn.edu.zju.vlis.util;
 
 import org.junit.Test;
 import org.slf4j.Logger;

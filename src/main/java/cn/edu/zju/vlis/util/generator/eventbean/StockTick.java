@@ -1,7 +1,7 @@
 
-package cn.edu.zju.vlis.xiaoyi.util.generator.eventbean;
+package cn.edu.zju.vlis.util.generator.eventbean;
 
-import cn.edu.zju.vlis.xiaoyi.util.DateHelper;
+import cn.edu.zju.vlis.util.DateHelper;
 
 public class StockTick {
 

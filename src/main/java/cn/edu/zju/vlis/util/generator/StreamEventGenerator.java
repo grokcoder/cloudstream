@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.xiaoyi.util.generator;
+package cn.edu.zju.vlis.util.generator;
 
 /**
  * Created by wangxiaoyi on 16/4/27.

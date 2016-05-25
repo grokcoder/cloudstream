@@ -1,10 +1,9 @@
-package cn.edu.zju.vlis.xiaoyi.esper.mycase;
+package cn.edu.zju.vlis.esper.mycase;
 
-import cn.edu.zju.vlis.xiaoyi.util.RandomHelper;
-import cn.edu.zju.vlis.xiaoyi.util.generator.StockTickerGenerator;
-import cn.edu.zju.vlis.xiaoyi.util.generator.StreamEventGenerator;
-import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockInfo;
-import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;
+import cn.edu.zju.vlis.util.generator.StockTickerGenerator;
+import cn.edu.zju.vlis.util.generator.StreamEventGenerator;
+import cn.edu.zju.vlis.util.generator.eventbean.StockInfo;
+import cn.edu.zju.vlis.util.generator.eventbean.StockTick;
 import com.espertech.esper.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.xiaoyi.esper.mycase;
+package cn.edu.zju.vlis.esper.mycase;
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;

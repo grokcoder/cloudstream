@@ -1,8 +1,8 @@
-package cn.edu.zju.vlis.xiaoyi.util.generator;
+package cn.edu.zju.vlis.util.generator;
 
-import cn.edu.zju.vlis.xiaoyi.util.MathHelper;
-import cn.edu.zju.vlis.xiaoyi.util.RandomHelper;
-import cn.edu.zju.vlis.xiaoyi.util.generator.eventbean.StockTick;
+import cn.edu.zju.vlis.util.MathHelper;
+import cn.edu.zju.vlis.util.generator.eventbean.StockTick;
+import cn.edu.zju.vlis.util.RandomHelper;
 
 /**
  * Created by wangxiaoyi on 16/4/27.

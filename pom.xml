@@ -71,7 +71,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>cn.edu.zju.vlis.xiaoyi.storm.examples.Start</mainClass>
+                            <mainClass>cn.edu.zju.vlis.storm.examples.Start</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

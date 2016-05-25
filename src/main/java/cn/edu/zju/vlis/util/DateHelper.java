@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.xiaoyi.util;
+package cn.edu.zju.vlis.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

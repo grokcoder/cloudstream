@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.xiaoyi.util;
+package cn.edu.zju.vlis.util;
 
 import junit.framework.Assert;
 import org.junit.Test;
