@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.example.storm;
+package cn.edu.zju.vlis.examples.storm;
 
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.BasicOutputCollector;

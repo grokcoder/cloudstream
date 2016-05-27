@@ -1,17 +1,17 @@
-package cn.edu.zju.vlis.example.generator;
+package cn.edu.zju.vlis.examples.generator;
 
+import cn.edu.zju.vlis.examples.generator.eventbean.StockTick;
 import cn.edu.zju.vlis.util.MathHelper;
-import cn.edu.zju.vlis.example.generator.eventbean.StockTick;
 import cn.edu.zju.vlis.util.RandomHelper;
 
 /**
  * Created by wangxiaoyi on 16/4/27.
  */
-public class StockTickerGenerator extends StreamEventGenerator<StockTick> {
+public class StockTickGenerator extends StreamEventGenerator<StockTick> {
 
     private String [] names = {"S1", "S2", "S3","S4","S5"};
 
-    public StockTickerGenerator(){
+    public StockTickGenerator(){
     }
     /**
      * generate next event object
@@ -27,7 +27,7 @@ public class StockTickerGenerator extends StreamEventGenerator<StockTick> {
     }
 
     public static void main(String []args){
-        StreamEventGenerator generator = new StockTickerGenerator();
+        StreamEventGenerator generator = new StockTickGenerator();
         int i = 0;
         while (i ++ < 100){
             System.out.println(generator.next());

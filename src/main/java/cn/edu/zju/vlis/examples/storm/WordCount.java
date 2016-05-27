@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.example.storm;
+package cn.edu.zju.vlis.examples.storm;
 
 import org.apache.storm.Config;
 import org.apache.storm.StormSubmitter;
@@ -8,7 +8,7 @@ import org.apache.storm.tuple.Fields;
 /**
  * Created by wangxiaoyi on 16/5/13.
  */
-public class Start {
+public class WordCount {
 
     private static final int TEN_MINUTES = 600000;
 

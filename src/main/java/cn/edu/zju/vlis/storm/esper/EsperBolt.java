@@ -1,7 +1,8 @@
 package cn.edu.zju.vlis.storm.esper;
 
-import cn.edu.zju.vlis.example.generator.eventbean.StockTick;
 import com.espertech.esper.client.*;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -9,18 +10,35 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
 
 /**
  * Created by wangxiaoyi on 16/5/25.
  */
 public class EsperBolt extends BaseRichBolt {
 
+    private static final Logger LOG = LogManager.getLogger(EsperBolt.class);
+
     private EsperContainer esperContainer;
     private OutputCollector collector;
 
     private Fields fields;  // output schema
 
+    private String inputKey;
+
+
+    private Map<String, Class> eventTypes;
+
+    private List<String> epls;
+
+
+    public EsperBolt(){
+        eventTypes = new HashMap<>();
+    }
 
     /**
      * container for esper
@@ -63,20 +81,24 @@ public class EsperBolt extends BaseRichBolt {
                 statement.addListener(listener);
             }else {
                 statement.addListener((EventBean[] newEvents, EventBean[] oldEvents) -> {
-                   handleResult(newEvents[0]);
+                   handleResult(newEvents);
                 });
             }
         }
     }
 
+
     /**
      * 处理esper语句执行的结果
      * 1. 发送给下一级bolt
      * 2. 用户自己决定如何处理
-     * @param eventBean
+     * @param newEvents
      */
-    public void handleResult(EventBean eventBean){
-
+    private void handleResult(EventBean[] newEvents){
+        for (EventBean eventBean: newEvents){
+            LOG.info(eventBean.getUnderlying());
+            //collector.emit(new Values(eventBean));
+        }
     }
 
     /**
@@ -85,13 +107,39 @@ public class EsperBolt extends BaseRichBolt {
      * 2. 创建EPServiceProvider 实例
      * 3. 注册esper语句以及listener实例
      */
-    public void initEsper(){
+    private void initEsper(){
+
         esperContainer = new EsperContainer("localhost");
+
+        for (Map.Entry<String, Class> eventType: eventTypes.entrySet()){
+            esperContainer.addEventType(eventType.getKey(), eventType.getValue());
+        }
+
         esperContainer.initEsper();
-        esperContainer.addEventType("type", StockTick.class);
-        esperContainer.registerEPL("select * from StockTick(stockSymbol = 'S3')");
+        for (String epl: epls)
+            esperContainer.registerEPL(epl);
     }
 
+
+    public void setFields(Fields fields) {
+        this.fields = fields;
+    }
+
+    public void setInputKey(String inputKey) {
+        this.inputKey = inputKey;
+    }
+
+
+    public void addEventType(String eventTypeName, Class classz){
+        eventTypes.put(eventTypeName, classz);
+    }
+
+    public void addEPL(String epl){
+        if(epls == null) epls = new LinkedList<>();
+        if(epl != null && !epl.isEmpty() && !epls.contains(epl)){
+            epls.add(epl);
+        }
+    }
 
 
     @Override
@@ -103,12 +151,15 @@ public class EsperBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
-
+        List<Object> events = input.getValues();
+        for (Object event: events)
+            esperContainer.sendEvent(event);
     }
 
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(fields);
+        if(fields != null)
+            declarer.declare(fields);
     }
 }

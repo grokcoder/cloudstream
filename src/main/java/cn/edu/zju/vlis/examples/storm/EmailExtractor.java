@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.example.storm;
+package cn.edu.zju.vlis.examples.storm;
 
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;

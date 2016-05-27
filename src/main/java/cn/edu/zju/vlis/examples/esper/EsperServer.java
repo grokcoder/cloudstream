@@ -1,13 +1,15 @@
-package cn.edu.zju.vlis.example.esper;
+package cn.edu.zju.vlis.examples.esper;
 
-import cn.edu.zju.vlis.example.generator.StockTickerGenerator;
-import cn.edu.zju.vlis.example.generator.StreamEventGenerator;
-import cn.edu.zju.vlis.example.generator.eventbean.StockInfo;
-import cn.edu.zju.vlis.example.generator.eventbean.StockTick;
+import cn.edu.zju.vlis.examples.generator.StockTickGenerator;
+import cn.edu.zju.vlis.examples.generator.StreamEventGenerator;
+import cn.edu.zju.vlis.examples.generator.eventbean.StockInfo;
+import cn.edu.zju.vlis.examples.generator.eventbean.StockTick;
+import cn.edu.zju.vlis.util.RandomHelper;
 import com.espertech.esper.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,7 +50,9 @@ public class EsperServer {
 */
 
 
-        String epl = "select si.industry, st.stockSymbol, st.price from StockInfo.win:length(10) as si inner join StockTick.win:length(10) as st on si.symbol = st.stockSymbol";
+        //String epl = "select si.industry, st.stockSymbol, st.price from StockInfo.win:length(10) as si inner join StockTick.win:length(10) as st on si.symbol = st.stockSymbol";
+
+        String epl = "select stockSymbol, count(*) from StockTick";
         //"select * from StockTick(price > 10)"
         EPStatement filterESP = epService.getEPAdministrator().createEPL(epl);
 
@@ -76,7 +80,7 @@ public class EsperServer {
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(new StockProducer());
 
-        /*executor.submit(() -> {
+        executor.submit(() -> {
             while (true) {
                 Object event = null;
                 try {
@@ -87,10 +91,10 @@ public class EsperServer {
                 }
                 sendEvent(event);
             }
-        });*/
+        });
         String [] names = {"S1", "S2", "S3","S4","S5"};
         String [] industries = {"IN1", "IN2","IN3","IN4"};
-      /*  executor.submit(() -> {
+        executor.submit(() -> {
            while (true){
 
                StockInfo info = new StockInfo(names[RandomHelper.getIntFromRange(0, 4)],
@@ -99,10 +103,10 @@ public class EsperServer {
                Thread.sleep(10);
            }
 
-        });*/
+        });
 
 
-     /*   Scanner in = new Scanner(System.in);
+        Scanner in = new Scanner(System.in);
         while (in.hasNext()){
             String sql = in.nextLine();
             EPStatement filterESP = epService.getEPAdministrator().createEPL(sql);
@@ -114,7 +118,7 @@ public class EsperServer {
                 }
             });
 
-        }*/
+        }
     }
 
 
@@ -123,7 +127,7 @@ public class EsperServer {
         private StreamEventGenerator generator;
 
         public StockProducer(){
-            generator = new StockTickerGenerator();
+            generator = new StockTickGenerator();
         }
 
         @Override

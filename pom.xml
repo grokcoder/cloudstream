@@ -71,7 +71,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>cn.edu.zju.vlis.example.storm.Start</mainClass>
+                            <mainClass>cn.edu.zju.vlis.examples.storm.WordCount</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

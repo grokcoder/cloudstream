@@ -1,5 +1,7 @@
-package cn.edu.zju.vlis.example.storm;
+package cn.edu.zju.vlis.examples.smesper;
 
+
+import cn.edu.zju.vlis.examples.generator.StockTickGenerator;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -7,18 +9,15 @@ import org.apache.storm.topology.base.BaseRichSpout;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by wangxiaoyi on 16/5/13.
+ * Created by wangxiaoyi on 16/5/27.
  */
-public class CommitFeedListener extends BaseRichSpout{
+public class StockTickSpout extends BaseRichSpout{
 
-
-    private SpoutOutputCollector outputCollector;
-    private List<String> commits;
+    private StockTickGenerator generator;
+    private SpoutOutputCollector collector;
 
     /**
      * Declare the output schema for all the streams of this topology.
@@ -27,7 +26,7 @@ public class CommitFeedListener extends BaseRichSpout{
      */
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("commit"));
+        declarer.declare(new Fields("StockTick"));
     }
 
     /**
@@ -42,24 +41,8 @@ public class CommitFeedListener extends BaseRichSpout{
      */
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-        this.outputCollector = collector;
-        try {
-            //commits = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("changelog.txt"),
-              //      Charset.defaultCharset().name());
-            commits = new LinkedList<>();
-            commits.add("b20ea50 nathan@example.com");
-            commits.add("064874b andy@example.com");
-            commits.add("28e4f8e andy@example.com");
-            commits.add("9a3e07f andy@example.com");
-            commits.add("cbb9cd1 nathan@example.com");
-            commits.add("0f663d2 jackson@example.com");
-            commits.add("0a4b984 nathan@example.com");
-            commits.add("1915ca4 derek@example.com");
-
-
-        }catch (Exception ioe){
-            throw new RuntimeException(ioe);
-        }
+        generator = new StockTickGenerator();
+        this.collector = collector;
     }
 
     /**
@@ -72,8 +55,6 @@ public class CommitFeedListener extends BaseRichSpout{
      */
     @Override
     public void nextTuple() {
-        for (String commit : commits){
-            outputCollector.emit(new Values(commit));
-        }
+        collector.emit(new Values(generator.next()));
     }
 }

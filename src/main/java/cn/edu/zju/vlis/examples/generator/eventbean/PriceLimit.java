@@ -6,7 +6,7 @@
  * The software in this package is published under the terms of the GPL license       *
  * a copy of which has been included with this distribution in the license.txt file.  *
  **************************************************************************************/
-package cn.edu.zju.vlis.example.generator.eventbean;
+package cn.edu.zju.vlis.examples.generator.eventbean;
 
 public class PriceLimit {
     String userId;

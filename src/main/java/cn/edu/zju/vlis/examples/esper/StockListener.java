@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.example.esper;
+package cn.edu.zju.vlis.examples.esper;
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
