@@ -1,10 +1,13 @@
 package cn.edu.zju.vlis.examples.storm;
 
+import org.apache.storm.shade.org.eclipse.jetty.util.log.Log;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.tuple.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +17,9 @@ import java.util.Map;
  */
 public class EmailCounter extends BaseBasicBolt{
 
+
+
+    private Logger LOG = LoggerFactory.getLogger(EmailCounter.class.getName());
     private Map<String, Integer> counts;
 
     /**
@@ -44,12 +50,13 @@ public class EmailCounter extends BaseBasicBolt{
 
     @Override
     public void prepare(Map stormConf, TopologyContext context) {
+        LOG.info("i am started");
         counts = new HashMap<>();
     }
 
     private void printCounts() {
         for (String email : counts.keySet()) {
-            System.out.println(
-                    String.format("%s has count of %s", email, counts.get(email)));
-        } }
+           LOG.info(String.format("%s has count of %s", email, counts.get(email)));
+        }
+    }
 }

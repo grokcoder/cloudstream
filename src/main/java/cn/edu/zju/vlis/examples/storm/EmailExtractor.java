@@ -1,18 +1,30 @@
 package cn.edu.zju.vlis.examples.storm;
 
+import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseBasicBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 
 
 /**
  * Created by wangxiaoyi on 16/5/13.
  */
 public class EmailExtractor extends BaseBasicBolt{
+
+    private Logger LOG = LoggerFactory.getLogger(EmailExtractor.class.getName());
+
+    @Override
+    public void prepare(Map stormConf, TopologyContext context) {
+        LOG.info("i am started");
+    }
+
     /**
      * Declare the output schema for all the streams of this topology.
      *

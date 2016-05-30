@@ -55,6 +55,7 @@ public class CommitFeedListener extends BaseRichSpout{
             commits.add("0f663d2 jackson@example.com");
             commits.add("0a4b984 nathan@example.com");
             commits.add("1915ca4 derek@example.com");
+            Thread.sleep(5000);
 
 
         }catch (Exception ioe){

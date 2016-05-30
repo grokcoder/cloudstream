@@ -23,7 +23,7 @@ public class EsperBolt extends BaseRichBolt {
 
     private static final Logger LOG = LogManager.getLogger(EsperBolt.class);
 
-    private EsperContainer esperContainer;
+    private BasicEsperManager esperMgr;
     private OutputCollector collector;
 
     private Fields fields;  // output schema
@@ -40,17 +40,14 @@ public class EsperBolt extends BaseRichBolt {
         eventTypes = new HashMap<>();
     }
 
-    /**
-     * container for esper
-     */
-    public class EsperContainer{
+
+    public class BasicEsperManager implements EsperManager{
 
         private EPServiceProvider epService;
         private final String esperURI;
         private Configuration esperConfig;
 
-
-        public EsperContainer(String engineURI){
+        public BasicEsperManager(String engineURI){
             this.esperURI = engineURI;
             this.esperConfig = new Configuration();
         }
@@ -61,7 +58,7 @@ public class EsperBolt extends BaseRichBolt {
         }
 
 
-        public void initEsper(){
+        public void startEsper(){
             epService = EPServiceProviderManager.getProvider(esperURI, esperConfig);
             epService.initialize();
         }
@@ -71,19 +68,21 @@ public class EsperBolt extends BaseRichBolt {
         }
 
 
-        public void registerEPL(String epl){
-            registerEPL(epl, null);
+        public void registerEPL(String EPL){
+            registerEPL(EPL, new BasicUpdateListener(EsperBolt.this));
         }
 
-        public void registerEPL(String epl, UpdateListener listener){
-            EPStatement statement = epService.getEPAdministrator().createEPL(epl);
+        public void registerEPL(String EPL, UpdateListener listener){
+            EPStatement statement = epService.getEPAdministrator().createEPL(EPL);
             if(listener != null) {
                 statement.addListener(listener);
             }else {
-                statement.addListener((EventBean[] newEvents, EventBean[] oldEvents) -> {
-                   handleResult(newEvents);
-                });
+               registerEPL(EPL);
             }
+        }
+
+        public void stopEsper(){
+            epService.destroy();
         }
     }
 
@@ -94,7 +93,7 @@ public class EsperBolt extends BaseRichBolt {
      * 2. 用户自己决定如何处理
      * @param newEvents
      */
-    private void handleResult(EventBean[] newEvents){
+    public void handleResult(EventBean[] newEvents){
         for (EventBean eventBean: newEvents){
             LOG.info(eventBean.getUnderlying());
             //collector.emit(new Values(eventBean));
@@ -102,22 +101,19 @@ public class EsperBolt extends BaseRichBolt {
     }
 
     /**
-     * 启动esper 流程
+     * 启动esperManager 流程
      * 1. 注册事件类型
      * 2. 创建EPServiceProvider 实例
      * 3. 注册esper语句以及listener实例
      */
-    private void initEsper(){
-
-        esperContainer = new EsperContainer("localhost");
-
+    private void startEsperMgr(){
+        esperMgr = new BasicEsperManager("localhost");
         for (Map.Entry<String, Class> eventType: eventTypes.entrySet()){
-            esperContainer.addEventType(eventType.getKey(), eventType.getValue());
+            esperMgr.addEventType(eventType.getKey(), eventType.getValue());
         }
-
-        esperContainer.initEsper();
+        esperMgr.startEsper();
         for (String epl: epls)
-            esperContainer.registerEPL(epl);
+            esperMgr.registerEPL(epl);
     }
 
 
@@ -145,7 +141,7 @@ public class EsperBolt extends BaseRichBolt {
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
-        initEsper();
+        startEsperMgr();
     }
 
 
@@ -153,7 +149,7 @@ public class EsperBolt extends BaseRichBolt {
     public void execute(Tuple input) {
         List<Object> events = input.getValues();
         for (Object event: events)
-            esperContainer.sendEvent(event);
+            esperMgr.sendEvent(event);
     }
 
 
@@ -161,5 +157,11 @@ public class EsperBolt extends BaseRichBolt {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         if(fields != null)
             declarer.declare(fields);
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        esperMgr.stopEsper();
     }
 }
