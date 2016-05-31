@@ -14,25 +14,25 @@ import org.apache.storm.utils.Utils;
  */
 public class WordCountCep {
 
-
     private static final int TEN_MINUTES = 600000;
 
     public static void main(String []args){
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("stock_ticker", new StockTickSpout());
 
-        EsperBolt countBoult = new EsperBolt();
-        countBoult.addEventType("StockTick", StockTick.class);
-        countBoult.addEPL("select stockSymbol, count(*) from StockTick group by stockSymbol");
+        EsperBolt countBolt = new EsperBolt
+                .EsperBoltBuilder()
+                .registerEventType("StockTick", StockTick.class)
+                .EPL("select stockSymbol, count(*) from StockTick group by stockSymbol")
+                .build();
 
-        builder.setBolt("stock_counter", countBoult)
+        builder.setBolt("stock_counter", countBolt)
                 .fieldsGrouping("stock_ticker", new Fields("StockTick"));
 
         Config config = new Config();
         config.setDebug(true);
 
         //config.setClasspath("./target");
-
         StormTopology topology = builder.createTopology();
         LocalCluster cluster = new LocalCluster();
 

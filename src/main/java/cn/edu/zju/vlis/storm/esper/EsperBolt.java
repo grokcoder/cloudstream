@@ -19,25 +19,27 @@ import java.util.Map;
 /**
  * Created by wangxiaoyi on 16/5/25.
  */
+
 public class EsperBolt extends BaseRichBolt {
 
-    private static final Logger LOG = LogManager.getLogger(EsperBolt.class);
+    private static final Logger LOG = LogManager.getLogger(EsperBolt.class.getName());
 
     private BasicEsperManager esperMgr;
+    private EventHandler eventHandler;
+
+
     private OutputCollector collector;
-
     private Fields fields;  // output schema
-
     private String inputKey;
-
-
     private Map<String, Class> eventTypes;
-
     private List<String> epls;
 
-
-    public EsperBolt(){
-        eventTypes = new HashMap<>();
+    private EsperBolt(EsperBoltBuilder builder){
+        this.fields = builder.outputFields;
+        this.eventTypes = builder.eventTypes;
+        this.epls = builder.epls;
+        this.eventHandler = builder.eventHandler;
+        this.inputKey = builder.inputKey;
     }
 
 
@@ -67,9 +69,8 @@ public class EsperBolt extends BaseRichBolt {
             epService.getEPRuntime().sendEvent(event);
         }
 
-
         public void registerEPL(String EPL){
-            registerEPL(EPL, new BasicUpdateListener(EsperBolt.this));
+            registerEPL(EPL, new BasicUpdateListener(EsperBolt.this.eventHandler));
         }
 
         public void registerEPL(String EPL, UpdateListener listener){
@@ -88,25 +89,16 @@ public class EsperBolt extends BaseRichBolt {
 
 
     /**
-     * 处理esper语句执行的结果
-     * 1. 发送给下一级bolt
-     * 2. 用户自己决定如何处理
-     * @param newEvents
-     */
-    public void handleResult(EventBean[] newEvents){
-        for (EventBean eventBean: newEvents){
-            LOG.info(eventBean.getUnderlying());
-            //collector.emit(new Values(eventBean));
-        }
-    }
-
-    /**
-     * 启动esperManager 流程
-     * 1. 注册事件类型
-     * 2. 创建EPServiceProvider 实例
-     * 3. 注册esper语句以及listener实例
+     * flow of starting esper manager
+     * 1. make sure we have a event handler
+     * 2. init esper manager
+     * 3. start esper
+     * 4. register EPL
      */
     private void startEsperMgr(){
+        LOG.info("Try to starting esper manager ... ");
+        if(eventHandler == null)
+            eventHandler = new LogEventHandler();
         esperMgr = new BasicEsperManager("localhost");
         for (Map.Entry<String, Class> eventType: eventTypes.entrySet()){
             esperMgr.addEventType(eventType.getKey(), eventType.getValue());
@@ -114,29 +106,9 @@ public class EsperBolt extends BaseRichBolt {
         esperMgr.startEsper();
         for (String epl: epls)
             esperMgr.registerEPL(epl);
+
+        LOG.info("Esper manager started ... ");
     }
-
-
-    public void setFields(Fields fields) {
-        this.fields = fields;
-    }
-
-    public void setInputKey(String inputKey) {
-        this.inputKey = inputKey;
-    }
-
-
-    public void addEventType(String eventTypeName, Class classz){
-        eventTypes.put(eventTypeName, classz);
-    }
-
-    public void addEPL(String epl){
-        if(epls == null) epls = new LinkedList<>();
-        if(epl != null && !epl.isEmpty() && !epls.contains(epl)){
-            epls.add(epl);
-        }
-    }
-
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
@@ -147,9 +119,14 @@ public class EsperBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
-        List<Object> events = input.getValues();
-        for (Object event: events)
+        if(inputKey == null) {
+            List<Object> events = input.getValues();
+            for (Object event : events)
+                esperMgr.sendEvent(event);
+        }else {
+            Object event = input.getValueByField(inputKey);
             esperMgr.sendEvent(event);
+        }
     }
 
 
@@ -163,5 +140,66 @@ public class EsperBolt extends BaseRichBolt {
     public void cleanup() {
         super.cleanup();
         esperMgr.stopEsper();
+    }
+
+    public void emit(List<Object> tuples){
+        collector.emit(tuples);
+    }
+
+    /**
+     * builder for esperbolt
+     */
+    public static class EsperBoltBuilder {
+
+        private Fields outputFields;
+        private String inputKey;
+        private Map<String, Class> eventTypes;
+        private List<String> epls;
+        private EventHandler eventHandler;
+
+        public EsperBoltBuilder(){
+            eventTypes = new HashMap<>();
+            epls = new LinkedList<>();
+        }
+
+        public EsperBoltBuilder EPL(String epl){
+            if(epls == null) epls = new LinkedList<>();
+            if(epl != null && !epl.isEmpty() && !epls.contains(epl)){
+                epls.add(epl);
+            }
+            return this;
+        }
+
+        public EsperBoltBuilder registerEventType(String eventTypeName, Class classz){
+            eventTypes.put(eventTypeName, classz);
+            return this;
+        }
+
+        public EsperBoltBuilder setEventHandler(EventHandler eventHandler) {
+            this.eventHandler = eventHandler;
+            return this;
+        }
+
+        public EsperBoltBuilder setInputKey(String inputKey) {
+            this.inputKey = inputKey;
+            return this;
+        }
+
+        /**
+         * specify emit outputFields
+         * @param fields
+         * @return
+         */
+        public EsperBoltBuilder setEmitFields(Fields fields) {
+            this.outputFields = fields;
+            return this;
+        }
+
+        public EsperBolt build(){
+            if(epls.size() == 0 || eventTypes.size() == 0)
+                throw new IllegalArgumentException("No EPL or event type specified !");
+            return new EsperBolt(this);
+        }
+
     }
 }

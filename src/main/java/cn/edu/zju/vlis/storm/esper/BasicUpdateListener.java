@@ -8,14 +8,14 @@ import com.espertech.esper.client.UpdateListener;
  */
 public class BasicUpdateListener implements UpdateListener{
 
-    private EsperBolt esperBolt;
+    private EventHandler handler;
 
-    public BasicUpdateListener(EsperBolt esperBolt){
-        this.esperBolt = esperBolt;
+    public BasicUpdateListener(EventHandler handler){
+        this.handler = handler;
     }
 
     @Override
     public void update(EventBean[] newEvents, EventBean[] oldEvents) {
-        esperBolt.handleResult(newEvents);
+        handler.handle(newEvents);
     }
 }
