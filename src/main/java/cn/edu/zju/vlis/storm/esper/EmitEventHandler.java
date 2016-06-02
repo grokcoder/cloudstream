@@ -14,6 +14,5 @@ public class EmitEventHandler implements EventHandler{
      */
     @Override
     public void handle(EventBean[] newEvents) {
-
     }
 }

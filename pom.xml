@@ -21,6 +21,7 @@
         <guava.version>19.0</guava.version>
         <esper.version>5.4.0</esper.version>
         <storm.version>1.0.1</storm.version>
+        <kafka.version>0.10.0.0</kafka.version>
     </properties>
 
     <dependencies>
@@ -40,7 +41,13 @@
         <dependency>
             <groupId>com.espertech</groupId>
             <artifactId>esper</artifactId>
-            <version>5.4.0</version>
+            <version>${esper.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
         </dependency>
 
         <dependency>
