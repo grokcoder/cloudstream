@@ -29,10 +29,10 @@ public class EsperBolt extends BaseRichBolt {
 
 
     private OutputCollector collector;
-    private Fields fields;  // output schema
-    private String inputKey;
-    private Map<String, Class> eventTypes;
-    private List<String> epls;
+    private final Fields fields;  // output schema
+    private final String inputKey;
+    private final Map<String, Class> eventTypes;
+    private final List<String> epls;
 
     private EsperBolt(EsperBoltBuilder builder){
         this.fields = builder.outputFields;
@@ -47,7 +47,7 @@ public class EsperBolt extends BaseRichBolt {
 
         private EPServiceProvider epService;
         private final String esperURI;
-        private Configuration esperConfig;
+        private final Configuration esperConfig;
 
         public BasicEsperManager(String engineURI){
             this.esperURI = engineURI;
