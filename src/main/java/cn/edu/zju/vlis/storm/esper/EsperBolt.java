@@ -1,5 +1,8 @@
 package cn.edu.zju.vlis.storm.esper;
 
+import cn.edu.zju.vlis.events.EventSchema;
+import cn.edu.zju.vlis.events.EventHandler;
+import cn.edu.zju.vlis.events.LogEventHandler;
 import com.espertech.esper.client.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -32,6 +35,7 @@ public class EsperBolt extends BaseRichBolt {
     private final Fields fields;  // output schema
     private final String inputKey;
     private final Map<String, Class> eventTypes;
+    private final List<EventSchema> eventSchemas;
     private final List<String> epls;
 
     private EsperBolt(EsperBoltBuilder builder){
@@ -40,6 +44,7 @@ public class EsperBolt extends BaseRichBolt {
         this.epls = builder.epls;
         this.eventHandler = builder.eventHandler;
         this.inputKey = builder.inputKey;
+        this.eventSchemas = builder.eventSchemas;
     }
 
 
@@ -59,6 +64,9 @@ public class EsperBolt extends BaseRichBolt {
             esperConfig.addEventType(eventTypeName, classz.getName());
         }
 
+        public void addEventType(EventSchema eventSchema){
+            esperConfig.addEventType(eventSchema.getEventName(), eventSchema.getTypeMap());
+        }
 
         public void startEsper(){
             epService = EPServiceProviderManager.getProvider(esperURI, esperConfig);
@@ -102,6 +110,9 @@ public class EsperBolt extends BaseRichBolt {
         esperMgr = new BasicEsperManager("localhost");
         for (Map.Entry<String, Class> eventType: eventTypes.entrySet()){
             esperMgr.addEventType(eventType.getKey(), eventType.getValue());
+        }
+        for (EventSchema eSchema: eventSchemas){
+            esperMgr.addEventType(eSchema);
         }
         esperMgr.startEsper();
         for (String epl: epls)
@@ -157,9 +168,12 @@ public class EsperBolt extends BaseRichBolt {
         private List<String> epls;
         private EventHandler eventHandler;
 
+        private List<EventSchema> eventSchemas;
+
         public EsperBoltBuilder(){
             eventTypes = new HashMap<>();
             epls = new LinkedList<>();
+            eventSchemas = new LinkedList<>();
         }
 
         public EsperBoltBuilder EPL(String epl){
@@ -174,6 +188,12 @@ public class EsperBolt extends BaseRichBolt {
             eventTypes.put(eventTypeName, classz);
             return this;
         }
+
+        public EsperBoltBuilder registerEventSchema(EventSchema eSchema){
+            eventSchemas.add(eSchema);
+            return this;
+        }
+
 
         public EsperBoltBuilder setEventHandler(EventHandler eventHandler) {
             this.eventHandler = eventHandler;
@@ -196,8 +216,6 @@ public class EsperBolt extends BaseRichBolt {
         }
 
         public EsperBolt build(){
-            if(epls.size() == 0 || eventTypes.size() == 0)
-                throw new IllegalArgumentException("No EPL or event type specified !");
             return new EsperBolt(this);
         }
 

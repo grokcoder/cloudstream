@@ -31,7 +31,7 @@ public class KafkaProducerTest {
             String messageStr = "Message_" + messageNum++;
             //long startTime = System.currentTimeMillis();
             try {
-                producer.send(new ProducerRecord<Integer, String>(topic, messageStr)).get();
+                producer.send(new ProducerRecord<>(topic, messageStr)).get();
                 System.out.println("Sent message: (" + messageNum + ", " + messageStr + ")");
             } catch (InterruptedException e) {
                 e.printStackTrace();

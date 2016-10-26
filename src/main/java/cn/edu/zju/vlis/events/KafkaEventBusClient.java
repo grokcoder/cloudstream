@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.storm;
+package cn.edu.zju.vlis.events;
 
 /**
  * Created by wangxiaoyi on 16/6/2.

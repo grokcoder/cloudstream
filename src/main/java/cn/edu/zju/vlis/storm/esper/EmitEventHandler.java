@@ -1,11 +1,12 @@
 package cn.edu.zju.vlis.storm.esper;
 
+import cn.edu.zju.vlis.events.EventHandler;
 import com.espertech.esper.client.EventBean;
 
 /**
  * Created by wangxiaoyi on 16/5/31.
  */
-public class EmitEventHandler implements EventHandler{
+public class EmitEventHandler implements EventHandler {
 
     /**
      * handle events

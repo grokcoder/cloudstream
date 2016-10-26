@@ -69,7 +69,6 @@ public class EsperServer {
 
     }
 
-
     public static synchronized void sendEvent(Object event){
         epService.getEPRuntime().sendEvent(event);
     }

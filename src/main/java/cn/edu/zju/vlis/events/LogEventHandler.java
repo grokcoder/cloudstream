@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.storm.esper;
+package cn.edu.zju.vlis.events;
 
 import com.espertech.esper.client.EventBean;
 import org.slf4j.Logger;
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by wangxiaoyi on 16/5/31.
  */
-public class LogEventHandler implements EventHandler{
+public class LogEventHandler implements EventHandler {
 
     private static Logger LOG = LoggerFactory.getLogger(LogEventHandler.class.getName());
 

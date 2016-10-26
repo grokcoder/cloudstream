@@ -1,6 +1,6 @@
 package cn.edu.zju.vlis.examples.smesper;
 
-import cn.edu.zju.vlis.examples.generator.eventbean.StockTick;
+import cn.edu.zju.vlis.events.EventSchema;
 import cn.edu.zju.vlis.storm.esper.EsperBolt;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -20,11 +20,26 @@ public class WordCountCep {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("stock_ticker", new StockTickSpout());
 
-        EsperBolt countBolt = new EsperBolt
+       /* EsperBolt countBolt = new EsperBolt
                 .EsperBoltBuilder()
                 .registerEventType("StockTick", StockTick.class)
                 .EPL("select stockSymbol, count(*) from StockTick group by stockSymbol")
                 .build();
+*/
+
+        EventSchema eventSchema = new EventSchema("StockTick");
+        eventSchema.addAttribute("stockSymbol", String.class);
+        eventSchema.addAttribute("price", Double.class);
+        eventSchema.addAttribute("time", Long.class);
+
+
+        EsperBolt countBolt = new EsperBolt
+                .EsperBoltBuilder()
+                .registerEventSchema(eventSchema)
+                .EPL("select stockSymbol, count(*) from StockTick group by stockSymbol")
+                .build();
+
+
 
         builder.setBolt("stock_counter", countBolt)
                 .fieldsGrouping("stock_ticker", new Fields("StockTick"));

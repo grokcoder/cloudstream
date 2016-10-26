@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.storm;
+package cn.edu.zju.vlis.events;
 
 /**
  * Created by wangxiaoyi on 16/6/2.
@@ -14,7 +14,7 @@ public interface IEventBusClient {
      */
     void subscribe(String eventName);
 
-    Event receive();
+    EventSchema receive();
 
     void close();
 
