@@ -40,6 +40,10 @@ public class StockTick {
         this.price = price;
     }
 
+    public long getTime() {
+        return time;
+    }
+
     public void setStockSymbol(String stockSymbol) {
         this.stockSymbol = stockSymbol;
     }

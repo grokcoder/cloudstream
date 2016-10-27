@@ -1,5 +1,6 @@
 package cn.edu.zju.vlis.examples.generator;
 
+import cn.edu.zju.vlis.events.EventData;
 import cn.edu.zju.vlis.examples.generator.eventbean.StockTick;
 import cn.edu.zju.vlis.util.MathHelper;
 import cn.edu.zju.vlis.util.RandomHelper;
@@ -7,7 +8,7 @@ import cn.edu.zju.vlis.util.RandomHelper;
 /**
  * Created by wangxiaoyi on 16/4/27.
  */
-public class StockTickGenerator extends StreamEventGenerator<StockTick> {
+public class StockTickGenerator extends StreamEventGenerator<EventData> {
 
     private String [] names = {"S1", "S2", "S3","S4","S5"};
 
@@ -19,11 +20,18 @@ public class StockTickGenerator extends StreamEventGenerator<StockTick> {
      * @return next event
      */
     @Override
-    public StockTick next() {
+    public EventData next() {
         StockTick tick = new StockTick(names[RandomHelper.getIntFromRange(0, 4)]);
         tick.setTime(System.currentTimeMillis());
         tick.setPrice(MathHelper.getDouble(RandomHelper.getDoubleFromRange(34, 39), "#.##"));
-        return tick;
+
+        Object[] data = new Object[]{tick.getStockSymbol(), tick.getPrice(), tick.getTime()};
+
+        EventData edata = new EventData("StockTick", data);
+        edata.addData("stockSymbol", tick.getStockSymbol());
+        edata.addData("price", tick.getPrice());
+        edata.addData("time", tick.getTime());
+        return edata;
     }
 
     public static void main(String []args){

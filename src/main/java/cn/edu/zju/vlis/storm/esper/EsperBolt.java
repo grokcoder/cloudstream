@@ -1,5 +1,6 @@
 package cn.edu.zju.vlis.storm.esper;
 
+import cn.edu.zju.vlis.events.EventData;
 import cn.edu.zju.vlis.events.EventSchema;
 import cn.edu.zju.vlis.events.EventHandler;
 import cn.edu.zju.vlis.events.LogEventHandler;
@@ -74,7 +75,15 @@ public class EsperBolt extends BaseRichBolt {
         }
 
         public void sendEvent(Object event){
-            epService.getEPRuntime().sendEvent(event);
+            if(event instanceof EventData){
+                sendEvent((EventData) event);
+            }else {
+                epService.getEPRuntime().sendEvent(event);
+            }
+        }
+
+        public void sendEvent(EventData eventData){
+            epService.getEPRuntime().sendEvent(eventData.getDataMap(), eventData.getEventSchemaName());
         }
 
         public void registerEPL(String EPL){
