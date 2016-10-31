@@ -1,5 +1,7 @@
 package cn.edu.zju.vlis.examples.kafka;
 
+import cn.edu.zju.vlis.events.EventData;
+import cn.edu.zju.vlis.events.EventSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -10,17 +12,25 @@ import java.util.concurrent.ExecutionException;
  * Created by wangxiaoyi on 16/6/17.
  */
 public class KafkaProducerTest {
-    private KafkaProducer<Integer, String> producer;
-    private final String topic = "test_topic_1";
-
+    private KafkaProducer<Integer, byte[]> producer;
+    private final String topic = "test1";
 
     public void init() {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "10.214.208.14:9092,10.214.208.13:9092,10.214.208.12:9092,10.214.208.11:9092");
+        //10.214.208.14:9092,10.214.208.13:9092,10.214.208.12:9092,10.214.208.11:9092
+        props.put("bootstrap.servers", "localhost:9092");
         props.put("client.id", "DemoProducer");
+        props.put("acks", "all");
+        props.put("retries", 0);
+        props.put("batch.size", 16384);
+        props.put("linger.ms", 1);
+        props.put("buffer.memory", 33554432);
         props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        //props.put("value.serializer", "org.apache.kafka.common.serialization.BytesSerializer");
 
+        props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
+
+       // org.apache.kafka.common.serialization.ByteArraySerializer
         producer = new KafkaProducer<>(props);
     }
 
@@ -31,7 +41,15 @@ public class KafkaProducerTest {
             String messageStr = "Message_" + messageNum++;
             //long startTime = System.currentTimeMillis();
             try {
-                producer.send(new ProducerRecord<>(topic, messageStr)).get();
+                //producer.send(new ProducerRecord<>(topic, messageStr)).get();
+
+                EventData eventData = new EventData("Person");
+                eventData.addData("name", "wangxiaoyi");
+                eventData.addData("age", 123);
+
+
+                producer.send(new ProducerRecord<>(topic, messageNum, EventSerializer.toBytes(eventData))).get();
+
                 System.out.println("Sent message: (" + messageNum + ", " + messageStr + ")");
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -41,10 +59,10 @@ public class KafkaProducerTest {
         }
     }
 
+
     public static void main(String []args){
 
-
-         KafkaProducerTest test = new KafkaProducerTest();
+        KafkaProducerTest test = new KafkaProducerTest();
         test.init();
         test.start();
 

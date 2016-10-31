@@ -10,12 +10,22 @@ import java.util.Map;
  */
 public class EventData implements Serializable{
 
-    private String eventSchemaName;
+    private String eventSchemaName;// just the name of the perticular name
     private Map<String, Object> dataMap;// support event of map data type
 
     public EventData(String eName, Map<String, Object> dataMap){
         this.eventSchemaName = eName;
         this.dataMap = dataMap;
+    }
+    public EventData(String eName){
+        this.eventSchemaName = eName;
+        this.dataMap = new HashMap<>();
+    }
+
+    //@warn just used for serializer
+    public EventData(){
+        this.eventSchemaName = "";
+        this.dataMap = new HashMap<>();
     }
 
     public void addData(String key, Object value){

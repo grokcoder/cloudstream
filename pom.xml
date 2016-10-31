@@ -21,10 +21,16 @@
         <guava.version>19.0</guava.version>
         <esper.version>5.4.0</esper.version>
         <storm.version>1.0.1</storm.version>
-        <kafka.version>0.10.0.0</kafka.version>
+        <kafka.version>0.10.1.0</kafka.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>3.0.3</version>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -47,7 +53,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>${kafka.version}</version>
+            <version>0.10.1.0</version>
         </dependency>
 
         <dependency>
@@ -61,7 +67,6 @@
             <artifactId>storm-core</artifactId>
             <version>1.0.1</version>
         </dependency>
-
 
     </dependencies>
 
@@ -95,9 +100,6 @@
                 </configuration>
 
             </plugin>
-
-
-
 
             <!--  <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
@@ -173,8 +175,6 @@
                     </execution>
                 </executions>
             </plugin>-->
-
-
         </plugins>
     </build>
 
