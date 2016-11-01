@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.events;
+package cn.edu.zju.vlis.eventhub;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;

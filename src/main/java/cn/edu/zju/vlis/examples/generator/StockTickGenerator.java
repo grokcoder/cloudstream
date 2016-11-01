@@ -1,13 +1,12 @@
 package cn.edu.zju.vlis.examples.generator;
 
-import cn.edu.zju.vlis.events.EventData;
+import cn.edu.zju.vlis.eventhub.EventData;
 import cn.edu.zju.vlis.examples.generator.eventbean.StockTick;
 import cn.edu.zju.vlis.util.MathHelper;
 import cn.edu.zju.vlis.util.RandomHelper;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by wangxiaoyi on 16/4/27.

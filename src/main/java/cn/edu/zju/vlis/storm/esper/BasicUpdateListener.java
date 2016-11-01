@@ -1,6 +1,6 @@
 package cn.edu.zju.vlis.storm.esper;
 
-import cn.edu.zju.vlis.events.EventHandler;
+import cn.edu.zju.vlis.eventhub.EventHandler;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 

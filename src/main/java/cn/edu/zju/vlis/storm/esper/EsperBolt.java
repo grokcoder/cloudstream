@@ -1,9 +1,9 @@
 package cn.edu.zju.vlis.storm.esper;
 
-import cn.edu.zju.vlis.events.EventData;
-import cn.edu.zju.vlis.events.EventSchema;
-import cn.edu.zju.vlis.events.EventHandler;
-import cn.edu.zju.vlis.events.LogEventHandler;
+import cn.edu.zju.vlis.eventhub.EventData;
+import cn.edu.zju.vlis.eventhub.EventSchema;
+import cn.edu.zju.vlis.eventhub.EventHandler;
+import cn.edu.zju.vlis.eventhub.LogEventHandler;
 import com.espertech.esper.client.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

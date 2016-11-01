@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.events;
+package cn.edu.zju.vlis.eventhub;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -15,11 +15,11 @@ import java.util.concurrent.ExecutionException;
  * Created by wangxiaoyi on 16/6/2.
  * get event from kafka
  */
-public class KafkaEventBusClient implements IEventBusClient<EventData>{
+public class KafkaEventBusClient implements IEventHubClient<EventData> {
 
     private static Logger LOG = Logger.getLogger(KafkaEventBusClient.class.getSimpleName());
 
-    enum ClientType {
+    public enum ClientType {
         PRODUCER,
         SUBSCRIBER
     }
@@ -34,7 +34,7 @@ public class KafkaEventBusClient implements IEventBusClient<EventData>{
     public KafkaEventBusClient(ClientType clientType, Properties props){
         this.clientType = clientType;
         this.props = props;
-        this.defaultTopic = props.getProperty("topic");
+        this.defaultTopic = props.getProperty("topic", "defaultEvent");
     }
 
     public void init(){
@@ -52,6 +52,11 @@ public class KafkaEventBusClient implements IEventBusClient<EventData>{
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
         subscriber = new KafkaConsumer<>(props);
+    }
+
+    @Override
+    public void connect() {
+        connect("localhost:9092");
     }
 
     @Override
@@ -89,6 +94,10 @@ public class KafkaEventBusClient implements IEventBusClient<EventData>{
     public void send(EventData event) {
         Objects.requireNonNull(event);
         try {
+            if(defaultTopic.equals("defaultEvent")){
+                LOG.error("Topic not defined yet!");
+                return;
+            }
             producer.send(new ProducerRecord<>(defaultTopic, event.getEventSchemaName(),
                     EventSerializer.toBytes(event))).get();
         } catch (InterruptedException e) {

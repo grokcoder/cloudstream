@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.events;
+package cn.edu.zju.vlis.eventhub;
 
 import com.espertech.esper.client.EventBean;
 import org.slf4j.Logger;

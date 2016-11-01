@@ -1,6 +1,6 @@
 package cn.edu.zju.vlis.examples.smesper;
 
-import cn.edu.zju.vlis.events.EventSchema;
+import cn.edu.zju.vlis.eventhub.EventSchema;
 import cn.edu.zju.vlis.storm.esper.EsperBolt;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;

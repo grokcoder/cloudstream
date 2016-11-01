@@ -1,7 +1,7 @@
 package cn.edu.zju.vlis.examples.kafka;
 
-import cn.edu.zju.vlis.events.EventData;
-import cn.edu.zju.vlis.events.EventSerializer;
+import cn.edu.zju.vlis.eventhub.EventData;
+import cn.edu.zju.vlis.eventhub.EventSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 

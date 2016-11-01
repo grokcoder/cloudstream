@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.events;
+package cn.edu.zju.vlis.eventhub;
 
 /**
  * Created by wangxiaoyi on 16/10/27.

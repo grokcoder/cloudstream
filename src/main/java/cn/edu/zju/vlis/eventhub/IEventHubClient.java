@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.events;
+package cn.edu.zju.vlis.eventhub;
 
 import java.util.List;
 
@@ -6,9 +6,10 @@ import java.util.List;
  * Created by wangxiaoyi on 16/6/2.
  * client for obtain event from the event bus
  */
-public interface IEventBusClient<T> {
+public interface IEventHubClient<T> {
 
     void connect(String connectionString);
+    void connect();
 
     void subscribe(List<EventSchema> interestedEvents);
 

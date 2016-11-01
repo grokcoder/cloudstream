@@ -1,12 +1,11 @@
 package cn.edu.zju.vlis.examples.kafka;
 
-import cn.edu.zju.vlis.events.EventData;
-import cn.edu.zju.vlis.events.EventSerializer;
+import cn.edu.zju.vlis.eventhub.EventData;
+import cn.edu.zju.vlis.eventhub.EventSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 
 import java.util.Collections;
 import java.util.Properties;

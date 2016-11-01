@@ -1,4 +1,4 @@
-package cn.edu.zju.vlis.events;
+package cn.edu.zju.vlis.eventhub;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -7,7 +7,6 @@ import org.junit.Test;
  * Created by wangxiaoyi on 16/10/31.
  */
 public class EventSerializerTest {
-
 
     @Test
     public void testToBytes(){
@@ -19,4 +18,5 @@ public class EventSerializerTest {
         EventData refEventData = EventSerializer.toEventData(bytes);
         Assert.assertEquals(refEventData.equals(eventData), true);
     }
+
 }
