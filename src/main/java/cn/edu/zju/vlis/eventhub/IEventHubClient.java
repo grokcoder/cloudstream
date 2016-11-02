@@ -1,12 +1,13 @@
 package cn.edu.zju.vlis.eventhub;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by wangxiaoyi on 16/6/2.
  * client for obtain event from the event bus
  */
-public interface IEventHubClient<T> {
+public interface IEventHubClient<T> extends Serializable{
 
     void connect(String connectionString);
     void connect();

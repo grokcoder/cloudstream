@@ -5,7 +5,6 @@ import cn.edu.zju.vlis.eventhub.EventSchema;
 import cn.edu.zju.vlis.eventhub.IEventHubClient;
 import cn.edu.zju.vlis.eventhub.KafkaEventBusClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.utils.SystemTime;
 
 import java.util.LinkedList;
 import java.util.List;

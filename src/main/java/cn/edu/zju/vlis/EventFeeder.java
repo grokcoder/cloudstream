@@ -38,6 +38,12 @@ public class EventFeeder {
             event.addData("age", i);
             System.out.println("Sending " + event);
             ieclient.send(event, event.getEventSchemaName());
+
+            try {
+                Thread.currentThread().sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
 

@@ -1,5 +1,6 @@
 package cn.edu.zju.vlis.eventhub;
 
+import org.apache.kafka.clients.KafkaClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -17,19 +18,20 @@ import java.util.concurrent.ExecutionException;
  */
 public class KafkaEventBusClient implements IEventHubClient<EventData> {
 
-    private static Logger LOG = Logger.getLogger(KafkaEventBusClient.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(KafkaEventBusClient.class.getSimpleName());
+
+    private static KafkaProducer<String, byte[]> producer;   // <eventName, EventData>
+    private static KafkaConsumer<String, byte[]> subscriber; // <eventName, EventData>
+    private ClientType clientType;
+    private String defaultTopic = "";
+    private Properties props;
 
     public enum ClientType {
         PRODUCER,
         SUBSCRIBER
     }
 
-    private KafkaProducer<String, byte[]> producer;   // <eventName, EventData>
-    private KafkaConsumer<String, byte[]> subscriber; // <eventName, EventData>
-
-    private ClientType clientType;
-    private String defaultTopic = "";
-    private Properties props;
+    public KafkaEventBusClient(){}
 
     public KafkaEventBusClient(ClientType clientType, Properties props){
         this.clientType = clientType;
@@ -75,6 +77,7 @@ public class KafkaEventBusClient implements IEventHubClient<EventData> {
         for (EventSchema event: events){
             topics.add(event.getEventName());
         }
+        if(subscriber == null) init();
         subscriber.subscribe(topics);
     }
 
