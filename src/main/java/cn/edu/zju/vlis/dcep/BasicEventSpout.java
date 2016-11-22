@@ -1,5 +1,6 @@
 package cn.edu.zju.vlis.dcep;
 
+import cn.edu.zju.vlis.dcep.dispolicy.TupleTransformer;
 import cn.edu.zju.vlis.eventhub.EventData;
 import cn.edu.zju.vlis.eventhub.EventSchema;
 import cn.edu.zju.vlis.eventhub.IEventHubClient;
@@ -24,7 +25,7 @@ public class BasicEventSpout extends BaseRichSpout implements Serializable{
 
     private String connString;// connection string of the eventbus
     private IEventHubClient<EventData> subscriber; //stub used to poll event frm the event bus
-    private List<EventSchema> interestedEvents;
+    private List<EventSchema> interestedEvents; //// TODO: 16/11/22 just support one type event now
 
     private SpoutOutputCollector collector;
 
@@ -38,12 +39,14 @@ public class BasicEventSpout extends BaseRichSpout implements Serializable{
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
         subscriber = new KafkaEventBusClient(KafkaEventBusClient.ClientType.SUBSCRIBER, props);
+        if (events == null || events.isEmpty()) throw new IllegalArgumentException("events should not be empty");
         this.interestedEvents = events;
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("EventData"));
+        //@warn: ...
+        declarer.declare(TupleTransformer.schemaToFileds(interestedEvents.get(0)));
     }
 
     @Override
@@ -56,8 +59,12 @@ public class BasicEventSpout extends BaseRichSpout implements Serializable{
     @Override
     public void nextTuple() {
         List<EventData> events = subscriber.pollEvents();
-        for (EventData event: events)
-            collector.emit(new Values(event));
+        for (EventData event: events) {
+            collector.emit(TupleTransformer.eventDataToOutputValues(event));
+        }
+
+
+
     }
 
 }

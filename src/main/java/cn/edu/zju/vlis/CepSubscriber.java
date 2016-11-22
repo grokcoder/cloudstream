@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Created by wangxiaoyi on 16/11/1.
  */
-public class EventSubscriber {
+public class CepSubscriber {
 
 
     public static void main(String []args){
@@ -47,7 +47,7 @@ public class EventSubscriber {
         topics.add(schema);
 
         ehSubscriber.subscribe(topics);
-        ehSubscriber.pollEvents();
+        //ehSubscriber.pollEvents();
 
         while (true){
             try {

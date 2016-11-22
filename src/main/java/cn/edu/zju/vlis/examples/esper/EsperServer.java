@@ -36,8 +36,6 @@ public class EsperServer {
         configuration.addEventType("StockTick", StockTick.class.getName());
         configuration.addEventType("StockInfo", StockInfo.class.getName());
         epService = EPServiceProviderManager.getProvider(engineURI, configuration);
-
-
     }
 
     public void init(){
@@ -47,7 +45,7 @@ public class EsperServer {
        /* String expressionText = "every stock=StockTick()";
         EPStatement factory = epService.getEPAdministrator().createPattern(expressionText);
         factory.addListener(new StockListener());
-*/
+        */
 
 
         //String epl = "select si.industry, st.stockSymbol, st.price from StockInfo.win:length(10) as si inner join StockTick.win:length(10) as st on si.symbol = st.stockSymbol";
@@ -76,6 +74,9 @@ public class EsperServer {
     public static void main(String []args){
         EsperServer server = new EsperServer("localhost");
         server.init();
+
+
+
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(new StockProducer());
 

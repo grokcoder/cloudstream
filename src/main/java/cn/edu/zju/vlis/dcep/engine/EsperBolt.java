@@ -1,12 +1,11 @@
 package cn.edu.zju.vlis.dcep.engine;
 
-import cn.edu.zju.vlis.eventhub.EventData;
-import cn.edu.zju.vlis.eventhub.EventSchema;
-import cn.edu.zju.vlis.eventhub.EventHandler;
-import cn.edu.zju.vlis.eventhub.LogEventHandler;
+import cn.edu.zju.vlis.dcep.dispolicy.TupleTransformer;
+import cn.edu.zju.vlis.eventhub.*;
 import com.espertech.esper.client.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.storm.shade.org.apache.zookeeper.server.TraceFormatter;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -37,6 +36,7 @@ public class EsperBolt extends BaseRichBolt {
     private final String inputKey;
     private final Map<String, Class> eventTypes;
     private final List<EventSchema> eventSchemas;
+    private final Map<String, EventSchema> schemaMap = new HashMap<>();
     private final List<String> epls;
 
     private EsperBolt(EsperBoltBuilder builder){
@@ -46,6 +46,9 @@ public class EsperBolt extends BaseRichBolt {
         this.eventHandler = builder.eventHandler;
         this.inputKey = builder.inputKey;
         this.eventSchemas = builder.eventSchemas;
+        for (EventSchema schema: eventSchemas){
+            schemaMap.put(schema.getEventName(), schema);
+        }
     }
 
 
@@ -136,16 +139,12 @@ public class EsperBolt extends BaseRichBolt {
         startEsperMgr();
     }
 
-
     @Override
     public void execute(Tuple input) {
-        if(inputKey == null) {
-            List<Object> events = input.getValues();
-            for (Object event : events)
-                esperMgr.sendEvent(event);
-        }else {
-            Object event = input.getValueByField(inputKey);
-            esperMgr.sendEvent(event);
+        //transfer input into the corresponding EventData instance
+        if(schemaMap.containsKey(input.getValueByField(EventConstant.EVENT_NAME))){
+            EventSchema schema = schemaMap.get(input.getValueByField(EventConstant.EVENT_NAME));
+            esperMgr.sendEvent(TupleTransformer.tupleToEventData(input, schema));
         }
     }
 

@@ -1,0 +1,15 @@
+
+local mode:
+1.start zookeeper
+cd $ZOOKEEPER_HOME/bin && zkServer.sh start
+2.start kafka
+cd $KAFKA_HOME/bin && kafka-server-start.sh $KAFKA_HOME/config/server.properties
+
+
+3.start EventsFeeder  // send events into DCEP
+4.start DcepClient    // define the cep and inject which into DCEP
+5.start CepSubscriber // receive notification from DCEP
+
+remote mode:
+
+todo:

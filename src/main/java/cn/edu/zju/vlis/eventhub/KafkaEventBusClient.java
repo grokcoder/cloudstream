@@ -1,6 +1,5 @@
 package cn.edu.zju.vlis.eventhub;
 
-import org.apache.kafka.clients.KafkaClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

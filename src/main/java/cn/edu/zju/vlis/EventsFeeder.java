@@ -9,7 +9,7 @@ import java.util.Properties;
 /**
  * Created by wangxiaoyi on 16/11/1.
  */
-public class EventFeeder {
+public class EventsFeeder {
 
     public static void main(String []args){
         eventFeed();

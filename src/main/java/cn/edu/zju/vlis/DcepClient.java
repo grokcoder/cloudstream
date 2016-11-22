@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by wangxiaoyi on 16/11/1.
  */
-public class DCEP {
+public class DcepClient {
 
     public static void main(String []args){
         //1.define data schema
@@ -45,7 +45,7 @@ public class DCEP {
 
 
         builder.setBolt("person_counter", countBolt)
-                .fieldsGrouping("cep_in", new Fields("EventData"));
+                .fieldsGrouping("cep_in", new Fields("EventName"));
 
         Config config = new Config();
         config.setDebug(true);
@@ -53,7 +53,6 @@ public class DCEP {
         config.registerSerialization(KafkaEventBusClient.class);
         config.registerSerialization(KafkaConsumer.class);
         config.registerSerialization(KafkaProducer.class);
-
 
         //config.registerSerialization(Kryo.class);
 
