@@ -53,4 +53,23 @@ public class EventData implements Serializable{
                 ", dataMap=" + dataMap +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EventData)) return false;
+
+        EventData eventData = (EventData) o;
+
+        if (getEventSchemaName() != null ? !getEventSchemaName().equals(eventData.getEventSchemaName()) : eventData.getEventSchemaName() != null)
+            return false;
+        return getDataMap() != null ? getDataMap().equals(eventData.getDataMap()) : eventData.getDataMap() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getEventSchemaName() != null ? getEventSchemaName().hashCode() : 0;
+        result = 31 * result + (getDataMap() != null ? getDataMap().hashCode() : 0);
+        return result;
+    }
 }

@@ -47,6 +47,7 @@ public class DcepClient {
         builder.setBolt("person_counter", countBolt)
                 .fieldsGrouping("cep_in", new Fields("EventName"));
 
+
         Config config = new Config();
         config.setDebug(true);
 
@@ -66,6 +67,5 @@ public class DcepClient {
         Utils.sleep(10 * 60 * 1000);
         cluster.killTopology("cep");
         cluster.shutdown();
-
     }
 }

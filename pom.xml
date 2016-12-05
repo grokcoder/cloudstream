@@ -83,10 +83,22 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>cn.edu.zju.vlis.examples.storm.WordCount</mainClass>
+                            <mainClass>cn.edu.zju.vlis.EventsFeeder</mainClass>
                         </manifest>
                     </archive>
+                    <outputDirectory>
+                        bin/
+                    </outputDirectory>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
 

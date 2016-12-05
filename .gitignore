@@ -17,8 +17,13 @@ hs_err_pid*
 
 logs
 target
-
+bin/cloudstream-1.0-SNAPSHOT-jar-with-dependencies.jar
 *.iml
 
 
 *.txt
+.gradle/
+src/main/java/cn/edu/zju/vlis/examples/showcase/
+src/test/java/cn/edu/zju/vlis/example/
+
+
