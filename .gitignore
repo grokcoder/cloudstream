@@ -26,4 +26,6 @@ bin/cloudstream-1.0-SNAPSHOT-jar-with-dependencies.jar
 src/main/java/cn/edu/zju/vlis/examples/showcase/
 src/test/java/cn/edu/zju/vlis/example/
 
+scripts/components/
+
 
