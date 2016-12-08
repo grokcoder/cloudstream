@@ -62,9 +62,6 @@ public class BasicEventSpout extends BaseRichSpout implements Serializable{
         for (EventData event: events) {
             collector.emit(TupleTransformer.eventDataToOutputValues(event));
         }
-
-
-
     }
 
 }

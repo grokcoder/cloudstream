@@ -27,5 +27,7 @@ src/main/java/cn/edu/zju/vlis/examples/showcase/
 src/test/java/cn/edu/zju/vlis/example/
 
 scripts/components/
+scripts/nohup.out
+
 
 
