@@ -3,15 +3,13 @@ package cn.edu.zju.vlis.dcep;
 import cn.edu.zju.vlis.dcep.dispolicy.TupleTransformer;
 import cn.edu.zju.vlis.eventhub.EventData;
 import cn.edu.zju.vlis.eventhub.EventSchema;
-import cn.edu.zju.vlis.eventhub.IEventHubClient;
+import cn.edu.zju.vlis.eventhub.IEventBusClient;
 import cn.edu.zju.vlis.eventhub.KafkaEventBusClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseRichSpout;
-import org.apache.storm.tuple.Fields;
-import org.apache.storm.tuple.Values;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.Properties;
 public class BasicEventSpout extends BaseRichSpout implements Serializable{
 
     private String connString;// connection string of the eventbus
-    private IEventHubClient<EventData> subscriber; //stub used to poll event frm the event bus
+    private IEventBusClient<EventData> subscriber; //stub used to poll event frm the event bus
     private List<EventSchema> interestedEvents; //// TODO: 16/11/22 just support one type event now
 
     private SpoutOutputCollector collector;

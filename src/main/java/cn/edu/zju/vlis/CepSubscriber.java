@@ -2,7 +2,7 @@ package cn.edu.zju.vlis;
 
 import cn.edu.zju.vlis.eventhub.EventData;
 import cn.edu.zju.vlis.eventhub.EventSchema;
-import cn.edu.zju.vlis.eventhub.IEventHubClient;
+import cn.edu.zju.vlis.eventhub.IEventBusClient;
 import cn.edu.zju.vlis.eventhub.KafkaEventBusClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 
@@ -35,7 +35,7 @@ public class CepSubscriber {
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
 
 
-        IEventHubClient<EventData> ehSubscriber =
+        IEventBusClient<EventData> ehSubscriber =
                 new KafkaEventBusClient(KafkaEventBusClient.ClientType.SUBSCRIBER, props);
         ehSubscriber.connect();
 

@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
  * Created by wangxiaoyi on 16/6/2.
  * get event from kafka
  */
-public class KafkaEventBusClient implements IEventHubClient<EventData> {
+public class KafkaEventBusClient implements IEventBusClient<EventData> {
 
     private static final Logger LOG = Logger.getLogger(KafkaEventBusClient.class.getSimpleName());
 

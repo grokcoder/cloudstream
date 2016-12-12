@@ -5,6 +5,7 @@
 export USER="satoshi"
 
 nodes=(172.16.0.6 172.16.0.7 172.16.0.8 172.16.0.9)
+zoo_nodes=(172.16.0.6 172.16.0.7 172.16.0.8) #node ip seperate by blank
 
 # setup no password login
 function set_up_nopwd_login(){
@@ -29,7 +30,6 @@ function install_jdk(){
 #                                                                                           #
 #                                                                                           #
 ##############################################################################################
-zoo_nodes=(172.16.0.6 172.16.0.7 172.16.0.8) #node ip seperate by blank
 
 function init(){
 
@@ -78,10 +78,27 @@ function start_zookeeper_cluster(){
 function stop_zookeeper_cluster(){
    for node in ${zoo_nodes[@]}
    do
+       echo "stoping zookeeper on ${node}"
        ssh $USER@${node} " ~/xiaoyi/dcep/components/zookeeper/bin/zkServer.sh stop"
    done
 }
 
+function clean(){
+    for node in ${nodes[@]}
+    do
+         echo "try to clean ... ${node}"
+         ssh $USER@${node} "rm -rf ~/xioayi/components/zookeeper"
+    done
+}
+
+
+
+
+stop_zookeeper_cluster
+clean
+install_zookeeper
+start_zookeeper_cluster
+
+#init
 #install_zookeeper
 #start_zookeeper_cluster
-#stop_zookeeper_cluster

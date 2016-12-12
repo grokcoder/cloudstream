@@ -1,7 +1,7 @@
 package cn.edu.zju.vlis;
 
 import cn.edu.zju.vlis.eventhub.EventData;
-import cn.edu.zju.vlis.eventhub.IEventHubClient;
+import cn.edu.zju.vlis.eventhub.IEventBusClient;
 import cn.edu.zju.vlis.eventhub.KafkaEventBusClient;
 
 import java.util.Properties;
@@ -27,11 +27,12 @@ public class EventsFeeder {
         props.put("linger.ms", 1);
         props.put("buffer.memory", 33554432);
 
-        IEventHubClient<EventData> ieclient =
+        IEventBusClient<EventData> ieclient =
                 new KafkaEventBusClient(KafkaEventBusClient.ClientType.PRODUCER, props);
 
         ieclient.connect();
-        int num = 1000;
+        long num = 100*10000l;
+        long start = System.currentTimeMillis();
         for (int i = 0; i < num; ++i){
             EventData event = new EventData("Person");
             event.addData("name", "wangxiaoyi" + i);
@@ -39,12 +40,14 @@ public class EventsFeeder {
             System.out.println("Sending " + event);
             ieclient.send(event, event.getEventSchemaName());
 
-            try {
-                Thread.currentThread().sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.currentThread().sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
+        long end = System.currentTimeMillis();
+        System.out.print((end - start) /(1.0 * num));
 
 
 
