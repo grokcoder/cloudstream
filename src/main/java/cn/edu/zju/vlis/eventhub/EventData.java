@@ -8,18 +8,21 @@ import java.util.Map;
  * Created by wangxiaoyi on 16/10/27.
  * contains only the event data
  */
-public class EventData implements Serializable{
+public class EventData implements Serializable, Comparable<EventData>{
 
     private String eventSchemaName;// just the name of the perticular name
+    private long timestamp;
     private Map<String, Object> dataMap;// support event of map data type
 
     public EventData(String eName, Map<String, Object> dataMap){
         this.eventSchemaName = eName;
         this.dataMap = dataMap;
+        this.timestamp = System.currentTimeMillis();
     }
     public EventData(String eName){
         this.eventSchemaName = eName;
         this.dataMap = new HashMap<>();
+        this.timestamp = System.currentTimeMillis();
     }
 
     //@warn just used for serializer
@@ -71,5 +74,11 @@ public class EventData implements Serializable{
         int result = getEventSchemaName() != null ? getEventSchemaName().hashCode() : 0;
         result = 31 * result + (getDataMap() != null ? getDataMap().hashCode() : 0);
         return result;
+    }
+
+
+    @Override
+    public int compareTo(EventData event) {
+        return (int)(this.timestamp - event.timestamp);
     }
 }

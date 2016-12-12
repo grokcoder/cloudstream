@@ -24,6 +24,8 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
     private ClientType clientType;
     private String defaultTopic = "";
     private Properties props;
+    private int partitionNum = 1;
+    private int currPartition = 0;
 
     public enum ClientType {
         PRODUCER,
@@ -33,10 +35,16 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
     public KafkaEventBusClient(){}
 
     public KafkaEventBusClient(ClientType clientType, Properties props){
+         this(clientType, props, 1);
+    }
+
+    public KafkaEventBusClient(ClientType clientType, Properties props, int partitionNum){
+        this.partitionNum = partitionNum;
         this.clientType = clientType;
         this.props = props;
         this.defaultTopic = props.getProperty("topic", "defaultEvent");
     }
+
 
     public void init(){
         if(clientType == ClientType.PRODUCER) initProducer();
@@ -84,8 +92,10 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
     public void send(EventData event, String topic) {
         Objects.requireNonNull(event);
         try {
-            producer.send(new ProducerRecord<>(topic, event.getEventSchemaName(),
+            currPartition = (currPartition + 1) % partitionNum;
+            producer.send(new ProducerRecord<>(topic, currPartition, event.getEventSchemaName(),
                     EventSerializer.toBytes(event))).get();
+
         } catch (InterruptedException e) {
             LOG.warn(e);
         } catch (ExecutionException e) {
@@ -117,6 +127,7 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
         for (ConsumerRecord<String, byte[]> record : records){
             eventDatas.add(EventSerializer.toEventData(record.value()));
         }
+        Collections.sort(eventDatas);
         return eventDatas;
     }
 

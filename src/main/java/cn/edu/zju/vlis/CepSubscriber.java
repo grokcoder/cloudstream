@@ -36,10 +36,10 @@ public class CepSubscriber {
 
 
         IEventBusClient<EventData> ehSubscriber =
-                new KafkaEventBusClient(KafkaEventBusClient.ClientType.SUBSCRIBER, props);
+                new KafkaEventBusClient(KafkaEventBusClient.ClientType.SUBSCRIBER, props, 1);
         ehSubscriber.connect();
 
-        EventSchema schema = new EventSchema("Person");
+        EventSchema schema = new EventSchema("Person-2");
         schema.addAttribute("name", String.class);
         schema.addAttribute("age", Integer.class);
 

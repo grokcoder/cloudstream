@@ -36,7 +36,7 @@ public class BasicEventSpout extends BaseRichSpout implements Serializable{
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
-        subscriber = new KafkaEventBusClient(KafkaEventBusClient.ClientType.SUBSCRIBER, props);
+        subscriber = new KafkaEventBusClient(KafkaEventBusClient.ClientType.SUBSCRIBER, props, 1);
         if (events == null || events.isEmpty()) throw new IllegalArgumentException("events should not be empty");
         this.interestedEvents = events;
     }

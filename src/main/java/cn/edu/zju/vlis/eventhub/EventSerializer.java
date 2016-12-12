@@ -25,7 +25,8 @@ public class EventSerializer{
         return output.toBytes();
     }
 
-    public static EventData toEventData(byte[] bytes){
+    //todo: change it to run concurrently
+    public static synchronized EventData toEventData(byte[] bytes){
         Input input = new Input(bytes);
         EventData eventData = kryo.readObject(input, EventData.class);
         input.close();

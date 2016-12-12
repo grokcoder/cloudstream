@@ -28,13 +28,13 @@ public class EventsFeeder {
         props.put("buffer.memory", 33554432);
 
         IEventBusClient<EventData> ieclient =
-                new KafkaEventBusClient(KafkaEventBusClient.ClientType.PRODUCER, props);
+                new KafkaEventBusClient(KafkaEventBusClient.ClientType.PRODUCER, props, 4);
 
         ieclient.connect();
-        long num = 100*10000l;
+        long num = 3000000l;
         long start = System.currentTimeMillis();
-        for (int i = 0; i < num; ++i){
-            EventData event = new EventData("Person");
+        for (int i = 1; i < num; ++i){
+            EventData event = new EventData("Person-2");
             event.addData("name", "wangxiaoyi" + i);
             event.addData("age", i);
             System.out.println("Sending " + event);
