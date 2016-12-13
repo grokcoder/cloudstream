@@ -65,7 +65,7 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
 
     @Override
     public void connect() {
-        connect("localhost:9092");
+        connect(props.getProperty("bootstrap.servers"));
     }
 
     @Override

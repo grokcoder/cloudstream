@@ -39,7 +39,8 @@ public class EventPartitionSubscriber implements Serializable{
     }
 
     public void connect() {
-        connect("localhost:9092");
+        connect(props.getProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
+
     }
 
     public void connect(String connectionString) {

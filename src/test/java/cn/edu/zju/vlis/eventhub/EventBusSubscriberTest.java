@@ -15,7 +15,7 @@ public class EventBusSubscriberTest {
     public void testPollEvents(){
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                "localhost:9092");
+                "cn8:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "group_1");
         //props.put(ConsumerConfig.CLIENT_ID_CONFIG, "group_1_client_1");
         props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 1000);
@@ -24,7 +24,7 @@ public class EventBusSubscriberTest {
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
 
-        EventBusSubscriber subscriber = new EventBusSubscriber(4, "Person-2", props);
+        EventBusSubscriber subscriber = new EventBusSubscriber(4, "Person", props);
         while (true){
             List<EventData> events = subscriber.pullEvents();
             for (EventData event: events){

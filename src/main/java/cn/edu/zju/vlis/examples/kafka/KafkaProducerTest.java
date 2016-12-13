@@ -13,12 +13,12 @@ import java.util.concurrent.ExecutionException;
  */
 public class KafkaProducerTest {
     private KafkaProducer<Integer, byte[]> producer;
-    private final String topic = "test1";
+    private final String topic = "Person3";
 
     public void init() {
         Properties props = new Properties();
         //10.214.208.14:9092,10.214.208.13:9092,10.214.208.12:9092,10.214.208.11:9092
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", "172.16.0.9:9092,cn8:9092,cn7:9092");
         props.put("client.id", "DemoProducer");
         props.put("acks", "all");
         props.put("retries", 0);
@@ -43,7 +43,7 @@ public class KafkaProducerTest {
             try {
                 //producer.send(new ProducerRecord<>(topic, messageStr)).get();
 
-                EventData eventData = new EventData("Person");
+                EventData eventData = new EventData("Person1");
                 eventData.addData("name", "wangxiaoyi");
                 eventData.addData("age", 123);
 

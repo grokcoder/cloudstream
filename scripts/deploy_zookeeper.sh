@@ -5,7 +5,7 @@
 export USER="satoshi"
 
 nodes=(172.16.0.6 172.16.0.7 172.16.0.8 172.16.0.9)
-zoo_nodes=(172.16.0.6 172.16.0.7 172.16.0.8) #node ip seperate by blank
+zoo_nodes=(172.16.0.7 172.16.0.8 172.16.0.9 ) #node ip seperate by blank
 
 # setup no password login
 function set_up_nopwd_login(){
@@ -46,7 +46,7 @@ function init(){
         id=$(($id + 1))
 
         # send file to remote machine
-        scp ./components/zookeeper-3.4.9.tar  $USER@${node}:~/xiaoyi/dcep/components/
+        #scp ./components/zookeeper-3.4.9.tar  $USER@${node}:~/xiaoyi/dcep/components/
     done
 }
 
@@ -55,7 +55,7 @@ function install_zookeeper(){
     for node in ${zoo_nodes[@]}
     do
         echo "sending zookeeper to host $node"
-        scp ./components/zookeeper-3.4.9.tar  $USER@${node}:~/xiaoyi/dcep/components/
+        #scp ./components/zookeeper-3.4.9.tar  $USER@${node}:~/xiaoyi/dcep/components/
         ssh $USER@${node} "tar -vxf ~/xiaoyi/dcep/components/zookeeper-3.4.9.tar"
         ssh $USER@${node} "rm -rf ~/xiaoyi/dcep/components/zookeeper"
         ssh $USER@${node} "mv -f ./zookeeper-3.4.9 ~/xiaoyi/dcep/components/zookeeper"
@@ -79,7 +79,9 @@ function stop_zookeeper_cluster(){
    for node in ${zoo_nodes[@]}
    do
        echo "stoping zookeeper on ${node}"
-       ssh $USER@${node} " ~/xiaoyi/dcep/components/zookeeper/bin/zkServer.sh stop"
+       ssh $USER@${node} "rm zookeeper.out"
+       ssh $USER@${node} "~/xiaoyi/dcep/components/zookeeper/bin/zkServer.sh stop"
+         ssh $USER@${node} "ps aux | grep QuorumPeerMain | awk '{print \$2}' | xargs kill -9"
    done
 }
 
@@ -87,18 +89,14 @@ function clean(){
     for node in ${nodes[@]}
     do
          echo "try to clean ... ${node}"
-         ssh $USER@${node} "rm -rf ~/xioayi/components/zookeeper"
+         ssh $USER@${node} "rm -rf /home/satoshi/xiaoyi"
     done
 }
 
-
-
-
-stop_zookeeper_cluster
-clean
-install_zookeeper
-start_zookeeper_cluster
-
+#clean
 #init
 #install_zookeeper
-#start_zookeeper_cluster
+
+#stop_zookeeper_cluster
+start_zookeeper_cluster
+

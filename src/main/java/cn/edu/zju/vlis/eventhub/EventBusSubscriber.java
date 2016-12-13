@@ -24,8 +24,7 @@ public class EventBusSubscriber implements Serializable{
 
     private ExecutorService executor;
     private PriorityQueue<EventData> priorityQueue;
-
-    private Lock lock = new ReentrantLock();
+    private Lock lock = new ReentrantLock(); // lock for priorityQueue
 
     private volatile boolean stopBusSubscriber = false;
     private volatile boolean startted = false;
