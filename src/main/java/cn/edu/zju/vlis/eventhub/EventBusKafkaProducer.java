@@ -1,9 +1,5 @@
 package cn.edu.zju.vlis.eventhub;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.log4j.Logger;
@@ -13,54 +9,37 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * Created by wangxiaoyi on 16/6/2.
- * get event from kafka
+ * Event Bus Producer implementation based on Kafka
  */
-public class KafkaEventBusClient implements IEventBusClient<EventData> {
+public class EventBusKafkaProducer implements IEventBusProducer<EventData> {
 
-    private static final Logger LOG = Logger.getLogger(KafkaEventBusClient.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(EventBusKafkaProducer.class.getSimpleName());
 
     private static KafkaProducer<String, byte[]> producer;   // <eventName, EventData>
-    private static KafkaConsumer<String, byte[]> subscriber; // <eventName, EventData>
-    private ClientType clientType;
     private String defaultTopic = "";
     private Properties props;
     private int partitionNum = 1;
     private int currPartition = 0;
+    private volatile boolean isConnected = false;
 
-    public enum ClientType {
-        PRODUCER,
-        SUBSCRIBER
+
+    public EventBusKafkaProducer(){}
+
+    public EventBusKafkaProducer(Properties props){
+         this(props, 1);
     }
 
-    public KafkaEventBusClient(){}
-
-    public KafkaEventBusClient(ClientType clientType, Properties props){
-         this(clientType, props, 1);
-    }
-
-    public KafkaEventBusClient(ClientType clientType, Properties props, int partitionNum){
+    public EventBusKafkaProducer(Properties props, int partitionNum){
         this.partitionNum = partitionNum;
-        this.clientType = clientType;
         this.props = props;
         this.defaultTopic = props.getProperty("topic", "defaultEvent");
     }
 
 
-    public void init(){
-        if(clientType == ClientType.PRODUCER) initProducer();
-        else initSubscriber();
-    }
-
-    private void initProducer(){
+    private void init(){
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
         producer = new KafkaProducer<>(props);
-    }
-
-    private void initSubscriber(){
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        subscriber = new KafkaConsumer<>(props);
     }
 
     @Override
@@ -76,26 +55,17 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
             props.put("bootstrap.servers", connectionString);
         }
         init();
-    }
-
-    @Override
-    public void subscribe(List<EventSchema> events) {
-        List<String> topics = new LinkedList<>();
-        for (EventSchema event: events){
-            topics.add(event.getEventName());
-        }
-        if(subscriber == null) init();
-        subscriber.subscribe(topics);
+        isConnected = true;
     }
 
     @Override
     public void send(EventData event, String topic) {
         Objects.requireNonNull(event);
+        if (!isConnected) connect();
         try {
             currPartition = (currPartition + 1) % partitionNum;
             producer.send(new ProducerRecord<>(topic, currPartition, event.getEventSchemaName(),
                     EventSerializer.toBytes(event))).get();
-
         } catch (InterruptedException e) {
             LOG.warn(e);
         } catch (ExecutionException e) {
@@ -104,6 +74,7 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
     }
 
     public void send(EventData event) {
+        if(!isConnected) connect();
         Objects.requireNonNull(event);
         try {
             if(defaultTopic.equals("defaultEvent")){
@@ -119,29 +90,9 @@ public class KafkaEventBusClient implements IEventBusClient<EventData> {
         }
     }
 
-    @Override
-    public List<EventData> pollEvents() {
-        ConsumerRecords<String, byte[]>
-                records = subscriber.poll(Long.parseLong(props.getProperty("poll_timeout", "3000")));
-        List<EventData> eventDatas = new LinkedList<>();
-        for (ConsumerRecord<String, byte[]> record : records){
-            eventDatas.add(EventSerializer.toEventData(record.value()));
-        }
-        Collections.sort(eventDatas);
-        return eventDatas;
-    }
 
     @Override
     public void close() {
-        switch (clientType){
-            case PRODUCER: {
-                producer.close();
-                return;
-            }
-            case SUBSCRIBER: {
-                subscriber.close();
-                return;
-            }
-        }
+        producer.close();
     }
 }

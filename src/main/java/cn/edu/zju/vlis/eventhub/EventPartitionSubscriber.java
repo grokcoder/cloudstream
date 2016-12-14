@@ -57,6 +57,7 @@ public class EventPartitionSubscriber implements Serializable{
         List<TopicPartition> partitions = new LinkedList<>();
         partitions.add(tp);
         subscriber.assign(partitions);// specify the partition info
+        subscriber.seekToEnd(partitions);// default read from the newest message
     }
 
     public List<EventData> pollEvents() {

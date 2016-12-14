@@ -1,7 +1,7 @@
 package cn.edu.zju.vlis.examples;
 
+import cn.edu.zju.vlis.dcep.engine.EplProcessor;
 import cn.edu.zju.vlis.eventhub.EventSchema;
-import cn.edu.zju.vlis.dcep.engine.EsperBolt;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.generated.StormTopology;
@@ -20,8 +20,8 @@ public class WordCountCep {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("stock_ticker", new StockTickSpout());
 
-       /* EsperBolt countBolt = new EsperBolt
-                .EsperBoltBuilder()
+       /* EplProcessor countBolt = new EplProcessor
+                .EplProcessorBuilder()
                 .registerEventType("StockTick", StockTick.class)
                 .EPL("select stockSymbol, count(*) from StockTick group by stockSymbol")
                 .build();
@@ -33,8 +33,7 @@ public class WordCountCep {
         eventSchema.addAttribute("time", Long.class);
 
 
-        EsperBolt countBolt = new EsperBolt
-                .EsperBoltBuilder()
+        EplProcessor countBolt = new EplProcessor.EplProcessorBuilder()
                 .registerEventSchema(eventSchema)
                 .EPL("select stockSymbol, count(*) from StockTick group by stockSymbol")
                 .build();

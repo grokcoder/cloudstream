@@ -53,7 +53,7 @@ public class EventBusSubscriber implements Serializable{
         }
     }
 
-    private void start(){
+    public void start(){
         initSubscribers();
         executor = Executors.newCachedThreadPool();
         priorityQueue = new PriorityQueue<>();

@@ -5,11 +5,9 @@ import cn.edu.zju.vlis.eventhub.*;
 import com.espertech.esper.client.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.storm.shade.org.apache.zookeeper.server.TraceFormatter;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
-import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 
@@ -23,13 +21,12 @@ import java.util.Map;
  * Created by wangxiaoyi on 16/5/25.
  */
 
-public class EsperBolt extends BaseRichBolt {
+public class EplProcessor extends Processor {
 
-    private static final Logger LOG = LogManager.getLogger(EsperBolt.class.getName());
+    private static final Logger LOG = LogManager.getLogger(EplProcessor.class.getName());
 
     private BasicEsperManager esperMgr;
     private EventHandler eventHandler;
-
 
     private OutputCollector collector;
     private final Fields fields;  // output schema
@@ -39,7 +36,7 @@ public class EsperBolt extends BaseRichBolt {
     private final Map<String, EventSchema> schemaMap = new HashMap<>();
     private final List<String> epls;
 
-    private EsperBolt(EsperBoltBuilder builder){
+    private EplProcessor(EplProcessorBuilder builder){
         this.fields = builder.outputFields;
         this.eventTypes = builder.eventTypes;
         this.epls = builder.epls;
@@ -90,7 +87,7 @@ public class EsperBolt extends BaseRichBolt {
         }
 
         public void registerEPL(String EPL){
-            registerEPL(EPL, new BasicUpdateListener(EsperBolt.this.eventHandler));
+            registerEPL(EPL, new BasicUpdateListener(EplProcessor.this.eventHandler));
         }
 
         public void registerEPL(String EPL, UpdateListener listener){
@@ -148,7 +145,6 @@ public class EsperBolt extends BaseRichBolt {
         }
     }
 
-
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         if(fields != null)
@@ -168,7 +164,7 @@ public class EsperBolt extends BaseRichBolt {
     /**
      * builder for esperbolt
      */
-    public static class EsperBoltBuilder {
+    public static class EplProcessorBuilder {
 
         private Fields outputFields;
         private String inputKey;
@@ -178,13 +174,13 @@ public class EsperBolt extends BaseRichBolt {
 
         private List<EventSchema> eventSchemas;
 
-        public EsperBoltBuilder(){
+        public EplProcessorBuilder(){
             eventTypes = new HashMap<>();
             epls = new LinkedList<>();
             eventSchemas = new LinkedList<>();
         }
 
-        public EsperBoltBuilder EPL(String epl){
+        public EplProcessorBuilder EPL(String epl){
             if(epls == null) epls = new LinkedList<>();
             if(epl != null && !epl.isEmpty() && !epls.contains(epl)){
                 epls.add(epl);
@@ -192,23 +188,23 @@ public class EsperBolt extends BaseRichBolt {
             return this;
         }
 
-        public EsperBoltBuilder registerEventType(String eventTypeName, Class classz){
+        public EplProcessorBuilder registerEventType(String eventTypeName, Class classz){
             eventTypes.put(eventTypeName, classz);
             return this;
         }
 
-        public EsperBoltBuilder registerEventSchema(EventSchema eSchema){
+        public EplProcessorBuilder registerEventSchema(EventSchema eSchema){
             eventSchemas.add(eSchema);
             return this;
         }
 
 
-        public EsperBoltBuilder setEventHandler(EventHandler eventHandler) {
+        public EplProcessorBuilder setEventHandler(EventHandler eventHandler) {
             this.eventHandler = eventHandler;
             return this;
         }
 
-        public EsperBoltBuilder setInputKey(String inputKey) {
+        public EplProcessorBuilder setInputKey(String inputKey) {
             this.inputKey = inputKey;
             return this;
         }
@@ -218,13 +214,13 @@ public class EsperBolt extends BaseRichBolt {
          * @param fields
          * @return
          */
-        public EsperBoltBuilder setEmitFields(Fields fields) {
+        public EplProcessorBuilder setEmitFields(Fields fields) {
             this.outputFields = fields;
             return this;
         }
 
-        public EsperBolt build(){
-            return new EsperBolt(this);
+        public EplProcessor build(){
+            return new EplProcessor(this);
         }
 
     }

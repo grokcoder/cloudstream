@@ -1,8 +1,8 @@
 package cn.edu.zju.vlis;
 
 import cn.edu.zju.vlis.eventhub.EventData;
-import cn.edu.zju.vlis.eventhub.IEventBusClient;
-import cn.edu.zju.vlis.eventhub.KafkaEventBusClient;
+import cn.edu.zju.vlis.eventhub.IEventBusProducer;
+import cn.edu.zju.vlis.eventhub.EventBusKafkaProducer;
 
 import java.util.Properties;
 
@@ -29,10 +29,10 @@ public class EventsFeeder {
         props.put("buffer.memory", 33554432);
 
 
-        IEventBusClient<EventData> ieclient =
-                new KafkaEventBusClient(KafkaEventBusClient.ClientType.PRODUCER, props, 4);
+        IEventBusProducer<EventData> producer =
+                new EventBusKafkaProducer(props, 4);
 
-        ieclient.connect();
+
         long num = 3000000l;
         long start = System.currentTimeMillis();
         for (int i = 1; i < num; ++i){
@@ -40,7 +40,7 @@ public class EventsFeeder {
             event.addData("name", "wangxiaoyi" + i);
             event.addData("age", i);
             System.out.println("Sending " + event);
-            ieclient.send(event, event.getEventSchemaName());
+            producer.send(event, event.getEventSchemaName());
 
 //            try {
 //                Thread.currentThread().sleep(1000);

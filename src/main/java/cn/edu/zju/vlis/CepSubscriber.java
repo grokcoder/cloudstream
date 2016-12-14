@@ -1,12 +1,8 @@
 package cn.edu.zju.vlis;
 
-import cn.edu.zju.vlis.eventhub.EventData;
-import cn.edu.zju.vlis.eventhub.EventSchema;
-import cn.edu.zju.vlis.eventhub.IEventBusClient;
-import cn.edu.zju.vlis.eventhub.KafkaEventBusClient;
+import cn.edu.zju.vlis.eventhub.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,25 +30,12 @@ public class CepSubscriber {
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
 
-
-        IEventBusClient<EventData> ehSubscriber =
-                new KafkaEventBusClient(KafkaEventBusClient.ClientType.SUBSCRIBER, props, 1);
-        ehSubscriber.connect();
-
-        EventSchema schema = new EventSchema("Person-2");
-        schema.addAttribute("name", String.class);
-        schema.addAttribute("age", Integer.class);
-
-        List<EventSchema> topics = new LinkedList<>();
-        topics.add(schema);
-
-        ehSubscriber.subscribe(topics);
-        //ehSubscriber.pollEvents();
+        EventBusSubscriber subscriber = new EventBusSubscriber(4,"Person", props);
 
         while (true){
             try {
                 Thread.sleep(1000);
-                List<EventData> events = ehSubscriber.pollEvents();
+                List<EventData> events = subscriber.pullEvents();
                 for (EventData event: events) System.out.println("Received: " + event);
             } catch (InterruptedException e) {
                 e.printStackTrace();
