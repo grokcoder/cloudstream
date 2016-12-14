@@ -29,5 +29,7 @@ src/test/java/cn/edu/zju/vlis/example/
 scripts/components/
 scripts/nohup.out
 
+docker/kafka-docker/package
+
 
 

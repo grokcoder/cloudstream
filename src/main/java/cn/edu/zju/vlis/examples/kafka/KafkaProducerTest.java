@@ -18,7 +18,7 @@ public class KafkaProducerTest {
     public void init() {
         Properties props = new Properties();
         //10.214.208.14:9092,10.214.208.13:9092,10.214.208.12:9092,10.214.208.11:9092
-        props.put("bootstrap.servers", "172.16.0.9:9092,cn8:9092,cn7:9092");
+        props.put("bootstrap.servers", "localhost:9092");
         props.put("client.id", "DemoProducer");
         props.put("acks", "all");
         props.put("retries", 0);

@@ -20,7 +20,7 @@ public class EventsFeeder {
 
         //10.214.208.14:9092,10.214.208.13:9092,10.214.208.12:9092,10.214.208.11:9092
         //props.put("bootstrap.servers", "cn8:9092");
-        props.put("bootstrap.servers", "cn8:9092");
+        props.put("bootstrap.servers", "172.17.0.2:9092");
         props.put("client.id", "EventProducer");
         props.put("acks", "all");
         props.put("retries", 0);
@@ -36,7 +36,7 @@ public class EventsFeeder {
         long num = 3000000l;
         long start = System.currentTimeMillis();
         for (int i = 1; i < num; ++i){
-            EventData event = new EventData("Person");
+            EventData event = new EventData("Person1");
             event.addData("name", "wangxiaoyi" + i);
             event.addData("age", i);
             System.out.println("Sending " + event);
