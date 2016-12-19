@@ -13,12 +13,12 @@ import java.util.concurrent.ExecutionException;
  */
 public class KafkaProducerTest {
     private KafkaProducer<Integer, byte[]> producer;
-    private final String topic = "Person3";
+    private final String topic = "test1234";
 
     public void init() {
         Properties props = new Properties();
         //10.214.208.14:9092,10.214.208.13:9092,10.214.208.12:9092,10.214.208.11:9092
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", "172.16.0.7:2183");
         props.put("client.id", "DemoProducer");
         props.put("acks", "all");
         props.put("retries", 0);
