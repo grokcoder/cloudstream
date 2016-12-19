@@ -73,6 +73,14 @@ public class EventBusKafkaProducer implements IEventBusProducer<EventData> {
         }
     }
 
+    @Override
+    public void sendAsync(EventData event, String topic) {
+        Objects.requireNonNull(event);
+        if (!isConnected) connect();
+        currPartition = (currPartition + 1) % partitionNum;
+        producer.send(new ProducerRecord<>(topic, currPartition, event.getEventSchemaName(), EventSerializer.toBytes(event)));
+    }
+
     public void send(EventData event) {
         if(!isConnected) connect();
         Objects.requireNonNull(event);

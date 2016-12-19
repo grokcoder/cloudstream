@@ -87,7 +87,6 @@ public class EventBusSubscriber implements Serializable{
     }
 
     private void mergeEvents(){
-        //System.out.println("merge ...");
         lock.lock();
         try {
             for (int i = 0; i < eventQueues.size(); ++i) {

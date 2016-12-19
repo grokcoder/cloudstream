@@ -19,8 +19,8 @@ public class EventsFeeder {
         Properties props = new Properties();// // TODO: 16/11/1 provide a config file
 
         //10.214.208.14:9092,10.214.208.13:9092,10.214.208.12:9092,10.214.208.11:9092
-        //props.put("bootstrap.servers", "cn8:9092");
-        props.put("bootstrap.servers", "172.17.0.2:9092");
+        props.put("bootstrap.servers", "cn8:9092");
+        //props.put("bootstrap.servers", "172.17.0.2:9092");
         props.put("client.id", "EventProducer");
         props.put("acks", "all");
         props.put("retries", 0);
@@ -30,7 +30,7 @@ public class EventsFeeder {
 
 
         IEventBusProducer<EventData> producer =
-                new EventBusKafkaProducer(props, 4);
+                new EventBusKafkaProducer(props, 1);
 
 
         long num = 3000000l;

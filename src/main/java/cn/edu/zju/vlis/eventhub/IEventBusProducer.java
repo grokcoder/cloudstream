@@ -13,6 +13,7 @@ public interface IEventBusProducer<T> extends Serializable{
     void connect();
 
     void send(T event, String topic);// syn send
+    void sendAsync(T event, String topic);
     void send(T event);// syn send
 
     void close();
