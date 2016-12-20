@@ -48,12 +48,25 @@ public class EventReceiver implements Runnable {
     public void run() {
         if (! isInit) init();
         int count = 0;
+        int step = 10000;
         while (count < maxEventNum){
             List<EventData> events = subscriber.pullEvents();
             count += events.size();
-            LOG.info("Receive count now " + count);
+            if(count > step) {
+                LOG.info("Receive count now " + count);
+                step += 10000;
+            }
         }
         System.err.println("Receive all done, use time : " + new Date(System.currentTimeMillis()) + " second ");
+    }
+
+
+    public static void main(String []args){
+        int maxEventNum = 100*10000;
+        String connString = "cn8:9092,cn8:9093";
+        String eventName = "x1";
+        int maxPartition = 1;
+        new EventReceiver(maxEventNum, maxPartition, connString, eventName).run();
     }
 
 }

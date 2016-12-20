@@ -19,7 +19,7 @@ public class LogEventHandler implements EventHandler {
     @Override
     public void handle(EventBean[] newEvents) {
         for (EventBean eventBean: newEvents){
-            LOG.info(eventBean.getUnderlying().toString());
+            System.out.println("Complex event detected: " + eventBean.getUnderlying().toString());
         }
     }
 }

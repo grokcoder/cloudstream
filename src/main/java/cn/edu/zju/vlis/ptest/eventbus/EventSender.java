@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by wangxiaoyi on 2016/12/19.
@@ -51,9 +53,7 @@ public class EventSender implements Runnable{
     public void run() {
         if(! isInit) init();
         int count = 1;
-        LOG.info("start sending " + id);
-        LOG.error("start time:  " + new Date(System.currentTimeMillis()));
-       // long startTime = System.currentTimeMillis();
+        LOG.info("Event sender start time:  " + new Date(System.currentTimeMillis()));
         while (count <= maxEventNum){
             count ++;
             event.getDataMap().put("age", count);
@@ -62,8 +62,18 @@ public class EventSender implements Runnable{
             if(count % 10000 == 0)
                 LOG.info("send " + event);
         }
-        //long endTime = System.currentTimeMillis();
-        //LOG.info("sending done, total tps : " + ((1000.0 * maxEventNum) /(1.0 * (endTime - startTime))));
+    }
 
+
+    public static void main(String []args){
+
+        int maxEventNum = 100 * 10000;
+
+        String connString = "cn8:9092,cn8:9093";
+        int id = 1;
+        int partitionNum = 1;
+        String eventName = "x1";
+
+        new EventSender(maxEventNum, partitionNum, connString, id, eventName).run();
     }
 }

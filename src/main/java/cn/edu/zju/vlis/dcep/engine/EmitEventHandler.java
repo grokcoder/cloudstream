@@ -15,5 +15,9 @@ public class EmitEventHandler implements EventHandler {
      */
     @Override
     public void handle(EventBean[] newEvents) {
+
+        for (EventBean evnt: newEvents){
+            System.out.println("Event detected : " + evnt.getUnderlying());
+        }
     }
 }

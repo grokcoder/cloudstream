@@ -24,15 +24,15 @@ public class EventBusSubscriberTest {
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
 
-        EventBusSubscriber subscriber = new EventBusSubscriber(8, "test-event5", props);
+        EventBusSubscriber subscriber = new EventBusSubscriber(4, "event4", props);
         int count = 0;
         while (count < 1000000){
 
             List<EventData> events = subscriber.pullEvents();
             count += events.size();
-//            for (EventData event: events){
-//                System.out.println(event);
-//            }
+            for (EventData event: events){
+                System.out.println(event);
+            }
         }
         System.err.println("Receive all done, use time : " + new Date(System.currentTimeMillis()) + " second ");
 
