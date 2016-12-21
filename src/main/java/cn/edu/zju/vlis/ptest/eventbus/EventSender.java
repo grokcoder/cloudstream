@@ -7,8 +7,6 @@ import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by wangxiaoyi on 2016/12/19.

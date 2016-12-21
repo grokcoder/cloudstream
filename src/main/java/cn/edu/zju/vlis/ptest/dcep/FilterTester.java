@@ -1,9 +1,10 @@
 package cn.edu.zju.vlis.ptest.dcep;
 
 import cn.edu.zju.vlis.dcep.engine.EplProcessor;
+import cn.edu.zju.vlis.dcep.engine.OutputSchema;
 import cn.edu.zju.vlis.dcep.engine.SpoutProcessor;
+import cn.edu.zju.vlis.dcep.engine.handler.EventHandlerType;
 import cn.edu.zju.vlis.eventhub.EventBusKafkaProducer;
-import cn.edu.zju.vlis.eventhub.EventConstant;
 import cn.edu.zju.vlis.eventhub.EventSchema;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -39,16 +40,39 @@ public class FilterTester {
 
         TopologyBuilder builder = new TopologyBuilder();
 
+        //2.1 define SpoutProcessor
         builder.setSpout("StockTickStream", new SpoutProcessor("cn8:9092", stockSchema, 1));
+
+
+        //2.2 define first EplProcessor
+        EventSchema fstockTick = new EventSchema("FStockTick");
+        fstockTick.addAttribute("name", String.class);
+        fstockTick.addAttribute("timestamp", Long.class);
+
+        OutputSchema outputSchema = new OutputSchema(EventHandlerType.STORM, fstockTick);
 
         EplProcessor filterProcessor = new EplProcessor.EplProcessorBuilder()
                 .registerEventSchema(stockSchema)
-                .EPL("select * from " + stockSchema.getEventName() + " where name = 'A'")
+                .EPL("select name, timestamp from " + stockSchema.getEventName() + " where name = 'A' or name = 'B'")
+                .setOutputSchema(outputSchema)
                 .build();
 
         builder.setBolt("filterStock", filterProcessor)
-                .fieldsGrouping("StockTickStream", new Fields(EventConstant.EVENT_NAME));
+                .fieldsGrouping("StockTickStream", new Fields("name"));
 
+
+        //2.3 define second EplProcessor
+        EplProcessor filterProcessor2 = new EplProcessor.EplProcessorBuilder()
+                .registerEventSchema(fstockTick)
+                .EPL("select name, timestamp from " + fstockTick.getEventName() + " where name = 'A' ")
+                .setOutputSchema(new OutputSchema(EventHandlerType.LOG, fstockTick))
+                .build();
+
+        builder.setBolt("resultBolt", filterProcessor2).
+                fieldsGrouping("filterStock", new Fields("name"));
+
+
+        // end build cep topology
         Config config = new Config();
         config.setDebug(true);
 

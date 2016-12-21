@@ -1,6 +1,9 @@
 package cn.edu.zju.vlis.dcep.engine;
 
 import cn.edu.zju.vlis.dcep.dispolicy.TupleTransformer;
+import cn.edu.zju.vlis.dcep.engine.handler.EventHandlerType;
+import cn.edu.zju.vlis.dcep.engine.handler.LogEventHandler;
+import cn.edu.zju.vlis.dcep.engine.handler.StormEventHandler;
 import cn.edu.zju.vlis.eventhub.*;
 import com.espertech.esper.client.*;
 import org.apache.log4j.LogManager;
@@ -8,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
-import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 
 import java.util.HashMap;
@@ -27,22 +29,21 @@ public class EplProcessor extends Processor {
 
     private BasicEsperManager esperMgr;
     private EventHandler eventHandler;
+    private OutputSchema outputSchema;
 
     private OutputCollector collector;
-    private final Fields fields;  // output schema
-    private final String inputKey;
+
     private final Map<String, Class> eventTypes;
     private final List<EventSchema> eventSchemas;
     private final Map<String, EventSchema> schemaMap = new HashMap<>();
     private final List<String> epls;
 
     private EplProcessor(EplProcessorBuilder builder){
-        this.fields = builder.outputFields;
+
         this.eventTypes = builder.eventTypes;
         this.epls = builder.epls;
-        this.eventHandler = builder.eventHandler;
-        this.inputKey = builder.inputKey;
         this.eventSchemas = builder.eventSchemas;
+        this.outputSchema = builder.outputSchema;
         for (EventSchema schema: eventSchemas){
             schemaMap.put(schema.getEventName(), schema);
         }
@@ -116,6 +117,9 @@ public class EplProcessor extends Processor {
         LOG.info("Try to starting esper manager ... ");
         if(eventHandler == null)
             eventHandler = new LogEventHandler();
+
+        eventHandler = getEventHandler(EplProcessor.this.outputSchema.getEth());
+
         esperMgr = new BasicEsperManager("localhost");
         for (Map.Entry<String, Class> eventType: eventTypes.entrySet()){
             esperMgr.addEventType(eventType.getKey(), eventType.getValue());
@@ -128,6 +132,20 @@ public class EplProcessor extends Processor {
             esperMgr.registerEPL(epl);
 
         LOG.info("Esper manager started ... ");
+    }
+
+    /**
+     * get event handler by event handler type
+     * @param eht
+     * @return
+     */
+    public EventHandler getEventHandler(EventHandlerType eht){
+        EventHandler eventHandler = null;
+        switch (eht){
+            case LOG: eventHandler = new LogEventHandler(); break;
+            case STORM: eventHandler = new StormEventHandler(this.collector, this.outputSchema);
+        }
+        return eventHandler;
     }
 
     @Override
@@ -147,8 +165,8 @@ public class EplProcessor extends Processor {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        if(fields != null)
-            declarer.declare(fields);
+        if(outputSchema != null)
+            declarer.declare(outputSchema.getOutputFileds());
     }
 
     @Override
@@ -157,22 +175,16 @@ public class EplProcessor extends Processor {
         esperMgr.stopEsper();
     }
 
-    public void emit(List<Object> tuples){
-        collector.emit(tuples);
-    }
-
     /**
      * builder for esperbolt
      */
     public static class EplProcessorBuilder {
 
-        private Fields outputFields;
-        private String inputKey;
         private Map<String, Class> eventTypes;
         private List<String> epls;
-        private EventHandler eventHandler;
-
         private List<EventSchema> eventSchemas;
+
+        private OutputSchema outputSchema;
 
         public EplProcessorBuilder(){
             eventTypes = new HashMap<>();
@@ -198,24 +210,8 @@ public class EplProcessor extends Processor {
             return this;
         }
 
-
-        public EplProcessorBuilder setEventHandler(EventHandler eventHandler) {
-            this.eventHandler = eventHandler;
-            return this;
-        }
-
-        public EplProcessorBuilder setInputKey(String inputKey) {
-            this.inputKey = inputKey;
-            return this;
-        }
-
-        /**
-         * specify emit outputFields
-         * @param fields
-         * @return
-         */
-        public EplProcessorBuilder setEmitFields(Fields fields) {
-            this.outputFields = fields;
+        public EplProcessorBuilder setOutputSchema(OutputSchema outputSchema){
+            this.outputSchema = outputSchema;
             return this;
         }
 
